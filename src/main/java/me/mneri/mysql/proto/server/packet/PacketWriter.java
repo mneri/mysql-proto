@@ -17,6 +17,6 @@ public class PacketWriter implements Closeable {
     }
 
     public void write(Packet packet) throws IOException {
-        out.write(packet.getBytes());
+        out.write(packet.toByteArray());
     }
 }

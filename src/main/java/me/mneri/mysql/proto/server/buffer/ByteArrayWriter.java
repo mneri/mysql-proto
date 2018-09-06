@@ -2,11 +2,11 @@ package me.mneri.mysql.proto.server.buffer;
 
 import me.mneri.mysql.proto.server.types.Integers;
 
-public class BufferWriter {
+public class ByteArrayWriter {
     private byte[] buff;
     private int offset;
 
-    public BufferWriter(byte[] buff) {
+    public ByteArrayWriter(byte[] buff) {
         this.buff = buff;
     }
 

@@ -1,5 +1,9 @@
 package me.mneri.mysql.proto.server.packet;
 
 public interface Packet {
-    byte[] getBytes();
+    int getPayloadLength();
+
+    int getSequenceId();
+
+    byte[] toByteArray();
 }
