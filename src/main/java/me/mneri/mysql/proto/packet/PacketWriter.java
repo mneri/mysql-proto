@@ -1,4 +1,4 @@
-package me.mneri.mysql.proto.server.packet;
+package me.mneri.mysql.proto.packet;
 
 import java.io.Closeable;
 import java.io.IOException;
