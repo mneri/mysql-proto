@@ -5,7 +5,7 @@ import me.mneri.mysql.proto.util.ByteArrayReader;
 
 import static me.mneri.mysql.proto.packet.Capabilities.*;
 
-public class Handshake extends Packet {
+public class Handshake10 extends Packet {
     private String authPluginName;
     private int capabilities;
     private String challenge1;
@@ -17,6 +17,10 @@ public class Handshake extends Packet {
     private byte sequenceId;
     private String serverVersion;
     private int statusFlag;
+
+    public Handshake10(byte sequenceId) {
+        this.sequenceId = sequenceId;
+    }
 
     public String getAuthPluginName() {
         return authPluginName;
@@ -61,6 +65,44 @@ public class Handshake extends Packet {
 
     public int getStatusFlag() {
         return statusFlag;
+    }
+
+    public boolean isCapabilitySet(int cap) {
+        return (getCapabilities() & cap) != 0;
+    }
+
+    @Override
+    public byte[] payloadBytes() {
+        ByteArrayBuilder builder = new ByteArrayBuilder();
+
+        //@formatter:off
+        builder.putInt1                 (getProtocolVersion());
+        builder.putNullTerminatedString (getServerVersion());
+        builder.putInt4                 (getConnectionId());
+        builder.putFixedLengthString    (getChallenge1(), 8);
+        builder.skip                    (1);
+        builder.putInt2                 ((short) (getCapabilities() & 0xffff));
+        builder.putInt1                 ((byte) getCharacterSet());
+        builder.putInt2                 ((short) getStatusFlag());
+        builder.putInt2                 ((short) (getCapabilities() >> 16));
+        //@formatter:on
+
+        if (isCapabilitySet(CLIENT_PLUGIN_AUTH))
+            builder.putInt1((byte) getChallenge2Length());
+        else
+            builder.putInt1((byte) 0);
+
+        builder.skip(10);
+
+        if (isCapabilitySet(CLIENT_SECURE_CONNECTION)) {
+            int length = Math.max(13, getChallenge2Length() - 8);
+            builder.putNullTerminatedString(getChallenge2());
+        }
+
+        if (isCapabilitySet(CLIENT_PLUGIN_AUTH))
+            builder.putNullTerminatedString(getAuthPluginName());
+
+        return builder.build();
     }
 
     public void readPayload(byte[] bytes) {
@@ -130,42 +172,11 @@ public class Handshake extends Packet {
         this.protocolVersion = protocolVersion;
     }
 
-    @Override
-    public void setSequenceId(byte sequenceId) {
-        this.sequenceId = sequenceId;
-    }
-
     public void setServerVersion(String serverVersion) {
         this.serverVersion = serverVersion;
     }
 
     public void setStatusFlag(int statusFlag) {
         this.statusFlag = statusFlag;
-    }
-
-    @Override
-    public byte[] payloadBytes() {
-        ByteArrayBuilder builder = new ByteArrayBuilder();
-
-        //@formatter:off
-        builder.putInt1                 (getProtocolVersion());
-        builder.putNullTerminatedString (getServerVersion());
-        builder.putInt4                 (getConnectionId());
-        builder.putFixedLengthString    (getChallenge1(), 8);
-        builder.skip                    (1);
-        builder.putInt2                 ((short) (getCapabilities() >> 16));
-        builder.putInt1                 ((byte) getCharacterSet());
-        builder.putInt2                 ((short) getStatusFlag());
-        builder.putInt2                 ((short) (getCapabilities() & 0xffff));
-        //@formatter:on
-
-        if ((getCapabilities() & CLIENT_PLUGIN_AUTH) != 0)
-            builder.putInt1((byte) getChallenge2Length());
-        else
-            builder.skip(1);
-
-        builder.skip(10);
-
-        return builder.build();
     }
 }

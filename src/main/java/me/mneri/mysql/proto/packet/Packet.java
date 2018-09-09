@@ -7,8 +7,6 @@ public abstract class Packet {
 
     public abstract void readPayload(byte[] bytes);
 
-    public abstract void setSequenceId(byte sequenceId);
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
