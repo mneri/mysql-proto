@@ -72,7 +72,7 @@ public class Handshake10 extends Packet {
     }
 
     @Override
-    public byte[] payloadBytes() {
+    public byte[] payload() {
         ByteArrayBuilder builder = new ByteArrayBuilder();
 
         //@formatter:off
@@ -105,7 +105,7 @@ public class Handshake10 extends Packet {
         return builder.build();
     }
 
-    public void readPayload(byte[] bytes) {
+    public void payload(byte[] bytes) {
         ByteArrayReader reader = new ByteArrayReader(bytes);
 
         //@formatter:off

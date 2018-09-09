@@ -13,12 +13,12 @@ public class ComQuit extends Packet {
     }
 
     @Override
-    public byte[] payloadBytes() {
+    public byte[] payload() {
         return new byte[]{0x01};
     }
 
     @Override
-    public void readPayload(byte[] bytes) {
+    public void payload(byte[] bytes) {
         // Ignore the payload
     }
 }

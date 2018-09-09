@@ -32,7 +32,7 @@ public class Handshake9 extends Packet {
     }
 
     @Override
-    public byte[] payloadBytes() {
+    public byte[] payload() {
         ByteArrayBuilder builder = new ByteArrayBuilder();
 
         //@formatter:off
@@ -46,7 +46,7 @@ public class Handshake9 extends Packet {
     }
 
     @Override
-    public void readPayload(byte[] bytes) {
+    public void payload(byte[] bytes) {
         ByteArrayReader reader = new ByteArrayReader(bytes);
 
         if (reader.getInt1() != 9)

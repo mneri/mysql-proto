@@ -15,12 +15,12 @@ public class HandshakeResponse320 extends Packet {
     }
 
     @Override
-    public byte[] payloadBytes() {
+    public byte[] payload() {
         return new byte[0];
     }
 
     @Override
-    public void readPayload(byte[] bytes) {
+    public void payload(byte[] bytes) {
         ByteArrayReader reader = new ByteArrayReader(bytes);
     }
 }

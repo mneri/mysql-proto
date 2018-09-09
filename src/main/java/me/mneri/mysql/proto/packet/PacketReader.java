@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.lang.reflect.InvocationTargetException;
+
+import me.mneri.mysql.proto.exception.InternalProtocolException;
 import me.mneri.mysql.proto.util.ByteArrayReader;
 
 public class PacketReader implements Closeable {
@@ -34,15 +36,13 @@ public class PacketReader implements Closeable {
             byte[] buff = new byte[length];
             in.read(buff, 0, length);
 
-            packet.readPayload(buff);
+            packet.payload(buff);
 
             return packet;
-        } catch (IllegalAccessException | InstantiationException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+            //@formatter:off
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+            //@formatter:on
+            throw new InternalProtocolException(e);
         }
-
-        return null;
     }
 }

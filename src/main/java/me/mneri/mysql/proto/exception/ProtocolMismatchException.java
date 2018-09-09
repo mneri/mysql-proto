@@ -1,4 +1,4 @@
 package me.mneri.mysql.proto.exception;
 
-public class ProtocolMismatchException extends ProtocolException {
+public class ProtocolMismatchException extends InternalProtocolException {
 }

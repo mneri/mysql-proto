@@ -18,7 +18,7 @@ public class PacketWriter implements Closeable {
     }
 
     public void write(Packet packet) throws IOException {
-        byte[] payload = packet.payloadBytes();
+        byte[] payload = packet.payload();
 
         ByteArrayBuilder builder = new ByteArrayBuilder(4);
         builder.putInt3(payload.length);
