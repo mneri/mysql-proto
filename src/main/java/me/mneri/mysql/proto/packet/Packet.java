@@ -1,9 +1,7 @@
 package me.mneri.mysql.proto.packet;
 
-public abstract class Packet {
-    public abstract int getPayloadLength();
+public interface Packet {
+    void readBytes(byte[] bytes);
 
-    public abstract int getSequenceId();
-
-    public abstract byte[] toByteArray();
+    byte[] toByteArray();
 }

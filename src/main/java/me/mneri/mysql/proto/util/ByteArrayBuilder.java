@@ -1,21 +1,61 @@
-package me.mneri.mysql.proto;
+package me.mneri.mysql.proto.util;
 
-public class ByteArrayWriter {
+import java.util.Arrays;
+
+public class ByteArrayBuilder {
+    private static final int DEFAULT_CAPACITY = 256;
+
     private byte[] bytes;
     private int offset;
 
-    public ByteArrayWriter(byte[] buff) {
-        this.bytes = buff;
+    public ByteArrayBuilder() {
+        this(DEFAULT_CAPACITY);
     }
 
-    public String putFixedLengthString(int len) {
-        StringBuilder sb = new StringBuilder(len);
-        int end = offset + len;
+    public ByteArrayBuilder(int initialCapacity) {
+        this.bytes = new byte[initialCapacity];
+    }
 
-        while (offset < end)
-            sb.append((char) bytes[offset++]);
+    public byte[] build() {
+        return Arrays.copyOf(bytes, offset);
+    }
 
-        return sb.toString();
+    public void ensureCapacity(int minimumCapacity) {
+        if (minimumCapacity <= 0)
+            throw new IllegalArgumentException();
+
+        if (minimumCapacity - bytes.length <= 0)
+            return;
+
+        int newCapacity = bytes.length * 2;
+
+        if (newCapacity - minimumCapacity < 0)
+            newCapacity = minimumCapacity;
+
+        if (newCapacity < 0) {
+            if (minimumCapacity < 0) // overflow
+                throw new OutOfMemoryError();
+
+            newCapacity = Integer.MAX_VALUE;
+        }
+
+        bytes = Arrays.copyOf(bytes, newCapacity);
+    }
+
+    public void ensureSpace(int len) {
+        ensureCapacity(offset + len);
+    }
+
+    public void putFixedLengthString(String s, int len) {
+        byte[] source = s.getBytes();
+
+        if (source.length != len)
+            throw new IllegalArgumentException();
+
+        ensureSpace(len);
+
+        System.arraycopy(source, 0, bytes, offset, len);
+        offset += len;
     }
 
     public void putInt1(byte i) {
@@ -46,6 +86,8 @@ public class ByteArrayWriter {
         if (size <= 0 || size > 8)
             throw new IllegalArgumentException();
 
+        ensureSpace(size);
+
         while (size-- > 0) {
             bytes[offset++] = (byte) (value & 0xFF);
             value >>= 8;
@@ -69,6 +111,9 @@ public class ByteArrayWriter {
 
     public void putLengthEncodedString(String s) {
         byte[] source = s.getBytes();
+
+        ensureSpace(1 + source.length);
+
         putLengthEncodedInt(source.length);
         System.arraycopy(source, 0, bytes, offset, source.length);
         offset += source.length;
@@ -76,16 +121,16 @@ public class ByteArrayWriter {
 
     public void putNullTerminatedString(String s) {
         byte[] source = s.getBytes();
+
+        ensureSpace(source.length + 1);
+
         System.arraycopy(source, 0, bytes, offset, source.length);
         offset += source.length;
         bytes[offset++] = 0x00;
     }
 
-    public void reset() {
-        offset = 0;
-    }
-
     public void skip(int len) {
+        ensureSpace(len);
         offset += len;
     }
 }

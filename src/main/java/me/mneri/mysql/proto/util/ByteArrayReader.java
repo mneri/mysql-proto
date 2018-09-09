@@ -1,4 +1,4 @@
-package me.mneri.mysql.proto;
+package me.mneri.mysql.proto.util;
 
 public class ByteArrayReader {
     private byte[] bytes;
@@ -82,10 +82,6 @@ public class ByteArrayReader {
 
     public boolean hasMore() {
         return offset < bytes.length;
-    }
-
-    public void reset() {
-        offset = 0;
     }
 
     public void skip(int len) {

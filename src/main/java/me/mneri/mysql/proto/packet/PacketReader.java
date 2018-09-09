@@ -3,14 +3,12 @@ package me.mneri.mysql.proto.packet;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-
-import me.mneri.mysql.proto.ByteArrayReader;
+import me.mneri.mysql.proto.util.ByteArrayReader;
 
 public class PacketReader implements Closeable {
     private InputStream in;
 
-    private PacketReader(InputStream in) {
+    public PacketReader(InputStream in) {
         this.in = in;
     }
 
@@ -32,10 +30,11 @@ public class PacketReader implements Closeable {
             System.arraycopy(header, 0, buff, 0, 4);
             in.read(buff, 4, length);
 
-            return clazz.getConstructor(byte[].class).newInstance(buff);
-        } catch (IllegalAccessException | NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InstantiationException | InvocationTargetException e) {
+            T packet = clazz.newInstance();
+            packet.readBytes(buff);
+
+            return packet;
+        } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
 

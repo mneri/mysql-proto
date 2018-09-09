@@ -7,7 +7,7 @@ import java.io.OutputStream;
 public class PacketWriter implements Closeable {
     private OutputStream out;
 
-    private PacketWriter(OutputStream out) {
+    public PacketWriter(OutputStream out) {
         this.out = out;
     }
 
