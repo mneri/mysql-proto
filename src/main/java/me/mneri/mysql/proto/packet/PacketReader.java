@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
 import me.mneri.mysql.proto.exception.InternalProtocolException;
+import me.mneri.mysql.proto.exception.MalformedPacketException;
 import me.mneri.mysql.proto.util.ByteArrayReader;
 
 public class PacketReader implements Closeable {
@@ -21,7 +22,7 @@ public class PacketReader implements Closeable {
         in.close();
     }
 
-    public <T extends Packet> T read(Class<T> clazz) throws IOException {
+    public <T extends Packet> T read(Class<T> clazz) throws IOException, MalformedPacketException {
         try {
             byte[] header = new byte[4];
 

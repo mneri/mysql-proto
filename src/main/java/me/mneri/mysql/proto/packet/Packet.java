@@ -11,14 +11,18 @@ public abstract class Packet {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        byte[] payload = payload();
+        try {
+            StringBuilder sb = new StringBuilder();
+            byte[] payload = payload();
 
-        for (int i = 0; i < payload.length; i++) {
-            sb.append(String.format("%02X", payload[i]));
-            sb.append((i != 0 && i % 8 == 0) ? "   " : " ");
+            for (int i = 0; i < payload.length; i++) {
+                sb.append(String.format("%02X", payload[i]));
+                sb.append((i != 0 && i % 8 == 0) ? "   " : " ");
+            }
+
+            return sb.toString();
+        } catch (MalformedPacketException e) {
+            return "Malformed packet";
         }
-
-        return sb.toString();
     }
 }

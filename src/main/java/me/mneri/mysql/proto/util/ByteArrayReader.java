@@ -82,6 +82,15 @@ public class ByteArrayReader {
         return sb.toString();
     }
 
+    public String getStringEOF() {
+        StringBuilder sb = new StringBuilder();
+
+        while (offset < bytes.length)
+            sb.append((char) bytes[offset++]);
+
+        return sb.toString();
+    }
+
     public boolean hasMore() {
         return offset < bytes.length;
     }
