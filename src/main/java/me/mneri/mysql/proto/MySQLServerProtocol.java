@@ -3,10 +3,9 @@ package me.mneri.mysql.proto;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import me.mneri.mysql.proto.packet.Capabilities;
-import me.mneri.mysql.proto.packet.Handshake;
-import me.mneri.mysql.proto.packet.PacketReader;
-import me.mneri.mysql.proto.packet.PacketWriter;
+import me.mneri.mysql.proto.packet.*;
+
+import static me.mneri.mysql.proto.packet.Capabilities.*;
 
 public class MySQLServerProtocol {
     private InputStream in;
@@ -24,16 +23,18 @@ public class MySQLServerProtocol {
             PacketReader reader = new PacketReader(in);
             PacketWriter writer = new PacketWriter(out);
 
-            while (true) {
-                Handshake handshake = new Handshake();
-                handshake.setProtocolVersion(0x0a);
-                handshake.setServerVersion("me.mneri.mysql.proto");
-                handshake.setConnectionId(1);
-                handshake.setChallenge1("aaaaaaaa");
-                handshake.setCapabilities(Capabilities.CLIENT_PLUGIN_AUTH);
+            Handshake handshake = new Handshake();
+            handshake.setProtocolVersion((byte) 0x0a);
+            handshake.setServerVersion("5.5.2-m2");
+            handshake.setConnectionId(0x0b);
+            handshake.setChallenge1("dvH@I-CJ");
+            handshake.setCapabilities(CLIENT_LONG_PASSWORD | CLIENT_PROTOCOL_41);
+            handshake.setCharacterSet(0x08);
+            handshake.setStatusFlag(0);
 
-                writer.write(handshake);
-            }
+            writer.write(handshake);
+
+            HandshakeResponse response = reader.read(HandshakeResponse.class);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -5,7 +5,7 @@ import me.mneri.mysql.proto.util.ByteArrayReader;
 
 import static me.mneri.mysql.proto.packet.Capabilities.*;
 
-public class Handshake implements Packet {
+public class Handshake extends Packet {
     private String authPluginName;
     private int capabilities;
     private String challenge1;
@@ -13,8 +13,8 @@ public class Handshake implements Packet {
     private int challenge2Length;
     private int characterSet;
     private int connectionId;
-    private int payloadLength;
-    private int protocolVersion;
+    private byte protocolVersion;
+    private byte sequenceId;
     private String serverVersion;
     private int statusFlag;
 
@@ -46,8 +46,13 @@ public class Handshake implements Packet {
         return connectionId;
     }
 
-    public int getProtocolVersion() {
+    public byte getProtocolVersion() {
         return protocolVersion;
+    }
+
+    @Override
+    public byte getSequenceId() {
+        return sequenceId;
     }
 
     public String getServerVersion() {
@@ -58,7 +63,7 @@ public class Handshake implements Packet {
         return statusFlag;
     }
 
-    public void readBytes(byte[] bytes) {
+    public void readPayload(byte[] bytes) {
         ByteArrayReader reader = new ByteArrayReader(bytes);
 
         //@formatter:off
@@ -121,8 +126,13 @@ public class Handshake implements Packet {
         this.connectionId = connectionId;
     }
 
-    public void setProtocolVersion(int protocolVersion) {
+    public void setProtocolVersion(byte protocolVersion) {
         this.protocolVersion = protocolVersion;
+    }
+
+    @Override
+    public void setSequenceId(byte sequenceId) {
+        this.sequenceId = sequenceId;
     }
 
     public void setServerVersion(String serverVersion) {
@@ -134,14 +144,27 @@ public class Handshake implements Packet {
     }
 
     @Override
-    public byte[] toByteArray() {
+    public byte[] payloadBytes() {
         ByteArrayBuilder builder = new ByteArrayBuilder();
-        builder.putInt1((byte) protocolVersion);
-        builder.putNullTerminatedString(serverVersion);
-        builder.putInt4(connectionId);
-        builder.putFixedLengthString(challenge1, 8);
-        builder.skip(1);
-        builder.putInt2((short) (capabilities >> 16));
+
+        //@formatter:off
+        builder.putInt1                 (getProtocolVersion());
+        builder.putNullTerminatedString (getServerVersion());
+        builder.putInt4                 (getConnectionId());
+        builder.putFixedLengthString    (getChallenge1(), 8);
+        builder.skip                    (1);
+        builder.putInt2                 ((short) (getCapabilities() >> 16));
+        builder.putInt1                 ((byte) getCharacterSet());
+        builder.putInt2                 ((short) getStatusFlag());
+        builder.putInt2                 ((short) (getCapabilities() & 0xffff));
+        //@formatter:on
+
+        if ((getCapabilities() & CLIENT_PLUGIN_AUTH) != 0)
+            builder.putInt1((byte) getChallenge2Length());
+        else
+            builder.skip(1);
+
+        builder.skip(10);
 
         return builder.build();
     }

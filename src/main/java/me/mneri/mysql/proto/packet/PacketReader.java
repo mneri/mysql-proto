@@ -25,13 +25,15 @@ public class PacketReader implements Closeable {
 
             ByteArrayReader reader = new ByteArrayReader(header);
             int length = reader.getInt3();
-
-            byte[] buff = new byte[length + 4];
-            System.arraycopy(header, 0, buff, 0, 4);
-            in.read(buff, 4, length);
+            byte sequenceId = reader.getInt1();
 
             T packet = clazz.newInstance();
-            packet.readBytes(buff);
+            packet.setSequenceId(sequenceId);
+
+            byte[] buff = new byte[length];
+            in.read(buff, 0, length);
+
+            packet.readPayload(buff);
 
             return packet;
         } catch (IllegalAccessException | InstantiationException e) {

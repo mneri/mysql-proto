@@ -3,6 +3,7 @@ package me.mneri.mysql.proto.packet;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
+import me.mneri.mysql.proto.util.ByteArrayBuilder;
 
 public class PacketWriter implements Closeable {
     private OutputStream out;
@@ -17,6 +18,15 @@ public class PacketWriter implements Closeable {
     }
 
     public void write(Packet packet) throws IOException {
-        out.write(packet.toByteArray());
+        byte[] payload = packet.payloadBytes();
+
+        ByteArrayBuilder builder = new ByteArrayBuilder(4);
+        builder.putInt3(payload.length);
+        builder.putInt1(packet.getSequenceId());
+        byte[] header = builder.build();
+
+        out.write(header);
+        out.write(payload);
+        out.flush();
     }
 }

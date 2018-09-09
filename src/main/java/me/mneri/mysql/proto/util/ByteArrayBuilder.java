@@ -46,6 +46,10 @@ public class ByteArrayBuilder {
         ensureCapacity(offset + len);
     }
 
+    public int length() {
+        return offset;
+    }
+
     public void putFixedLengthString(String s, int len) {
         byte[] source = s.getBytes();
 
