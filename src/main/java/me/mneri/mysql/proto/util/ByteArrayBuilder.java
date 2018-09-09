@@ -62,28 +62,34 @@ public class ByteArrayBuilder {
         offset += len;
     }
 
-    public void putInt1(byte i) {
+    public ByteArrayBuilder putInt1(byte i) {
         putIntN(i, 1);
+        return this;
     }
 
-    public void putInt2(short i) {
+    public ByteArrayBuilder putInt2(short i) {
         putIntN(i, 2);
+        return this;
     }
 
-    public void putInt3(int i) {
+    public ByteArrayBuilder putInt3(int i) {
         putIntN(i, 3);
+        return this;
     }
 
-    public void putInt4(int i) {
+    public ByteArrayBuilder putInt4(int i) {
         putIntN(i, 4);
+        return this;
     }
 
-    public void putInt6(long i) {
+    public ByteArrayBuilder putInt6(long i) {
         putIntN(1, 6);
+        return this;
     }
 
-    public void putInt8(long i) {
+    public ByteArrayBuilder putInt8(long i) {
         putIntN(i, 8);
+        return this;
     }
 
     private void putIntN(long value, int size) {
@@ -98,7 +104,7 @@ public class ByteArrayBuilder {
         }
     }
 
-    public void putLengthEncodedInt(long value) {
+    public ByteArrayBuilder putLengthEncodedInt(long value) {
         if (value < 251) {
             putInt1((byte) value);
         } else if (value <= 65_536) {
@@ -111,9 +117,11 @@ public class ByteArrayBuilder {
             putInt1((byte) 0xFE);
             putInt8(value);
         }
+
+        return this;
     }
 
-    public void putLengthEncodedString(String s) {
+    public ByteArrayBuilder putLengthEncodedString(String s) {
         byte[] source = s.getBytes();
 
         ensureSpace(1 + source.length);
@@ -121,9 +129,11 @@ public class ByteArrayBuilder {
         putLengthEncodedInt(source.length);
         System.arraycopy(source, 0, bytes, offset, source.length);
         offset += source.length;
+
+        return this;
     }
 
-    public void putNullTerminatedString(String s) {
+    public ByteArrayBuilder putNullTerminatedString(String s) {
         byte[] source = s.getBytes();
 
         ensureSpace(source.length + 1);
@@ -131,10 +141,13 @@ public class ByteArrayBuilder {
         System.arraycopy(source, 0, bytes, offset, source.length);
         offset += source.length;
         bytes[offset++] = 0x00;
+
+        return this;
     }
 
-    public void skip(int len) {
+    public ByteArrayBuilder skip(int len) {
         ensureSpace(len);
         offset += len;
+        return this;
     }
 }
