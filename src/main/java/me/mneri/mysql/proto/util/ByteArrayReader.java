@@ -75,7 +75,9 @@ public class ByteArrayReader {
         StringBuilder sb = new StringBuilder();
 
         while (bytes[offset] != 0x00)
-            sb.append(bytes[offset++]);
+            sb.append((char) bytes[offset++]);
+
+        offset++;
 
         return sb.toString();
     }
