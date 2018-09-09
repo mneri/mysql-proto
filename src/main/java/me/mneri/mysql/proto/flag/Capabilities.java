@@ -1,4 +1,4 @@
-package me.mneri.mysql.proto.packet;
+package me.mneri.mysql.proto.flag;
 
 public class Capabilities {
     //@formatter:off

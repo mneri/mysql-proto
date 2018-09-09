@@ -3,7 +3,7 @@ package me.mneri.mysql.proto.packet;
 import me.mneri.mysql.proto.util.ByteArrayBuilder;
 import me.mneri.mysql.proto.util.ByteArrayReader;
 
-import static me.mneri.mysql.proto.packet.Capabilities.*;
+import static me.mneri.mysql.proto.flag.Capabilities.*;
 
 public class Handshake10 extends Packet {
     private String authPluginName;

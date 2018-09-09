@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import me.mneri.mysql.proto.packet.*;
 
-import static me.mneri.mysql.proto.packet.Capabilities.*;
-
 public class MySQLServerProtocol {
     private PacketReader reader;
     private PacketWriter writer;
