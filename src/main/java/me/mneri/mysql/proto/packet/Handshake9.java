@@ -1,6 +1,6 @@
 package me.mneri.mysql.proto.packet;
 
-import me.mneri.mysql.proto.ProtocolMismatchException;
+import me.mneri.mysql.proto.exception.ProtocolMismatchException;
 import me.mneri.mysql.proto.util.ByteArrayBuilder;
 import me.mneri.mysql.proto.util.ByteArrayReader;
 
