@@ -53,25 +53,27 @@ public class OkPacket extends Packet {
 
     @Override
     public byte[] payload() throws MalformedPacketException {
+        Context context = getContext();
         ByteArrayBuilder builder = new ByteArrayBuilder();
 
-        builder.putInt1((byte) 0x00);
-        builder.putLengthEncodedInt(getAffectedRows());
-        builder.putLengthEncodedInt(getLastInsertId());
+        //@formatter:off
+        builder.putInt1             ((byte) 0x00);
+        builder.putLengthEncodedInt (getAffectedRows());
+        builder.putLengthEncodedInt (getLastInsertId());
+        //@formatter:on
 
-        if (false) { // capabilities
+        if (context.isCapabilitySet(CLIENT_PROTOCOL_41)) {
             builder.putInt2(getStatusFlags());
             builder.putInt2(getWarnings());
-        } else if (false) { // client transaction
+        } else if (context.isCapabilitySet(CLIENT_TRANSACTIONS)) {
             builder.putInt2(getStatusFlags());
         }
 
-        if (false) { // client session track
+        if (context.isCapabilitySet(CLIENT_SESSION_TRACK)) {
             builder.putLengthEncodedString(getInfo());
 
-            if (false) { // server session state changed
+            if (context.isStatusFlagSet(ServerStatus.SESSION_STATE_CHANGED))
                 builder.putLengthEncodedString(getSessionStateInfo());
-            }
         } else {
             builder.putFixedLengthString(getInfo(), getInfo().length());
         }
@@ -81,6 +83,7 @@ public class OkPacket extends Packet {
 
     @Override
     public void payload(byte[] bytes) throws MalformedPacketException {
+        Context context = getContext();
         ByteArrayReader reader = new ByteArrayReader(bytes);
 
         int header = reader.getInt1();
@@ -90,8 +93,6 @@ public class OkPacket extends Packet {
 
         setAffectedRows(reader.getLengthEncodedInt());
         setLastInsertId(reader.getLengthEncodedInt());
-
-        Context context = getContext();
 
         if (context.isCapabilitySet(CLIENT_PROTOCOL_41)) {
             setStatusFlags(reader.getInt2());
