@@ -106,10 +106,10 @@ public class HandshakeResponse41 extends Packet {
             throw new MalformedPacketException();
 
         //@formatter:off
-        setMaxPacketSize(reader.getInt4());
-        setCharacterSet (reader.getInt1());
-                         reader.skip(23);
-        setUsername     (reader.getNullTerminatedString());
+        setMaxPacketSize (reader.getInt4());
+        setCharacterSet  (reader.getInt1());
+                          reader.skip(23);
+        setUsername      (reader.getNullTerminatedString());
         //@formatter:on
 
         if (isCapabilitySet(CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA)) {
@@ -122,7 +122,7 @@ public class HandshakeResponse41 extends Packet {
         if (isCapabilitySet(CLIENT_CONNECT_WITH_DB))
             setDatabase(reader.getNullTerminatedString());
 
-        // XXX: The protocol specification doesn't say this
+        // XXX: Not in the protocol specification
         if (!reader.hasMore())
             return;
 
