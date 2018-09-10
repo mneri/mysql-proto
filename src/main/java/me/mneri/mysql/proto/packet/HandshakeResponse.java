@@ -1,19 +1,9 @@
 package me.mneri.mysql.proto.packet;
 
+import me.mneri.mysql.proto.Packet;
 import me.mneri.mysql.proto.util.ByteArrayReader;
 
-public class HandshakeResponse320 extends Packet {
-    private byte sequenceId;
-
-    public HandshakeResponse320(byte sequenceId) {
-        this.sequenceId = sequenceId;
-    }
-
-    @Override
-    public byte getSequenceId() {
-        return sequenceId;
-    }
-
+public class HandshakeResponse extends Packet {
     @Override
     public byte[] payload() {
         return new byte[0];

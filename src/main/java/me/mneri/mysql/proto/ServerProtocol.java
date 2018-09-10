@@ -7,23 +7,20 @@ import java.io.OutputStream;
 import me.mneri.mysql.proto.exception.MalformedPacketException;
 import me.mneri.mysql.proto.flag.ServerStatus;
 import me.mneri.mysql.proto.packet.Handshake10;
-import me.mneri.mysql.proto.packet.HandshakeResponse320;
-import me.mneri.mysql.proto.packet.PacketReader;
-import me.mneri.mysql.proto.packet.PacketWriter;
+import me.mneri.mysql.proto.packet.HandshakeResponse;
+import me.mneri.mysql.proto.packet.OkPacket;
 
-public class MySQLServerProtocol {
-    private PacketReader reader;
-    private PacketWriter writer;
+public class ServerProtocol {
+    private Context context;
 
-    private MySQLServerProtocol(InputStream in, OutputStream out) {
-        reader = new PacketReader(in);
-        writer = new PacketWriter(out);
+    private ServerProtocol(InputStream in, OutputStream out) {
+        context = new Context(in, out);
     }
 
     private void start() {
         try {
             //@formatter:off
-            Handshake10 handshake = new Handshake10((byte) 0);
+            Handshake10 handshake = context.create(Handshake10.class, (byte) 0);
 
             handshake.setServerVersion  ("5.5.2-m2");
             handshake.setConnectionId   (0);
@@ -33,17 +30,24 @@ public class MySQLServerProtocol {
             handshake.setServerStatus   (ServerStatus.AUTOCOMMIT);
             handshake.setAuthPluginName ("mysql_native_password");
 
-            writer.write(handshake);
+            context.write(handshake);
             //@formatter:on
 
-            HandshakeResponse320 handshakeResponse = reader.read(HandshakeResponse320.class);
+            HandshakeResponse handshakeResponse = context.read(HandshakeResponse.class);
+
+            OkPacket ok = new OkPacket((byte) 0);
+            ok.setInfo("Success");
+
+            context.write(ok);
+
+            System.out.println("yay");
         } catch (IOException | MalformedPacketException e) {
             e.printStackTrace();
         }
     }
 
     public static void start(InputStream in, OutputStream out) {
-        MySQLServerProtocol proto = new MySQLServerProtocol(in, out);
+        ServerProtocol proto = new ServerProtocol(in, out);
         proto.start();
     }
 }

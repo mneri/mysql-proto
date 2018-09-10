@@ -1,24 +1,15 @@
 package me.mneri.mysql.proto.packet;
 
+import me.mneri.mysql.proto.Packet;
 import me.mneri.mysql.proto.exception.MalformedPacketException;
 import me.mneri.mysql.proto.util.ByteArrayBuilder;
 import me.mneri.mysql.proto.util.ByteArrayReader;
 
 public class AuthMoreData extends Packet {
     private String data;
-    private byte sequenceId;
-
-    public AuthMoreData(byte sequenceId) {
-        this.sequenceId = sequenceId;
-    }
 
     public String getData() {
         return data;
-    }
-
-    @Override
-    public byte getSequenceId() {
-        return sequenceId;
     }
 
     @Override

@@ -17,6 +17,7 @@ public class ServerStatus {
     public static final int QUERY_WAS_SLOW           = 2048;
     public static final int PS_OUT_PARAMS            = 4096;
     public static final int IN_TRANS_READONLY        = 8192;
+    public static final int SESSION_STATE_CHANGED    = 16384;
     //@formatter:on
     
     private ServerStatus() {

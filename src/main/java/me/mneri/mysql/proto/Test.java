@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Main {
+public class Test {
     public static void main(String... args) {
         try {
             ExecutorService service = Executors.newCachedThreadPool();
@@ -17,7 +17,7 @@ public class Main {
 
                 service.submit(() -> {
                     try {
-                        MySQLServerProtocol.start(socket.getInputStream(), socket.getOutputStream());
+                        ServerProtocol.start(socket.getInputStream(), socket.getOutputStream());
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {

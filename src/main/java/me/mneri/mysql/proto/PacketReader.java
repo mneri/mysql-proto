@@ -1,29 +1,27 @@
-package me.mneri.mysql.proto.packet;
+package me.mneri.mysql.proto;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-
-import java.lang.reflect.InvocationTargetException;
-
 import me.mneri.mysql.proto.exception.InternalProtocolException;
 import me.mneri.mysql.proto.exception.MalformedPacketException;
 import me.mneri.mysql.proto.util.ByteArrayReader;
 
-public class PacketReader implements Closeable {
-    private InputStream in;
+class PacketReader implements Closeable {
+    private Context context;
 
-    public PacketReader(InputStream in) {
-        this.in = in;
+    PacketReader(Context context) {
+        this.context = context;
     }
 
     @Override
     public void close() throws IOException {
-        in.close();
+        context.getInputStream().close();
     }
 
-    public <T extends Packet> T read(Class<T> clazz) throws IOException, MalformedPacketException {
+    <T extends Packet> T read(Class<T> clazz) throws IOException, MalformedPacketException {
         try {
+            InputStream in = context.getInputStream();
             byte[] header = new byte[4];
 
             in.read(header);
@@ -32,7 +30,9 @@ public class PacketReader implements Closeable {
             int length = reader.getInt3();
             byte sequenceId = reader.getInt1();
 
-            T packet = clazz.getConstructor(byte.class).newInstance(sequenceId);
+            T packet = clazz.newInstance();
+            packet.setSequenceId(sequenceId);
+            packet.setContext(context);
 
             byte[] buff = new byte[length];
             in.read(buff, 0, length);
@@ -41,7 +41,7 @@ public class PacketReader implements Closeable {
 
             return packet;
             //@formatter:off
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (IllegalAccessException | InstantiationException e) {
             //@formatter:on
             throw new InternalProtocolException(e);
         }

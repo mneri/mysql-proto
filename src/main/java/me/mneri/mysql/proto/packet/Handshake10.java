@@ -1,5 +1,6 @@
 package me.mneri.mysql.proto.packet;
 
+import me.mneri.mysql.proto.Packet;
 import me.mneri.mysql.proto.exception.ProtocolMismatchException;
 import me.mneri.mysql.proto.util.ByteArrayBuilder;
 import me.mneri.mysql.proto.util.ByteArrayReader;
@@ -12,13 +13,8 @@ public class Handshake10 extends Packet {
     private int capabilities;
     private int characterSet;
     private int connectionId;
-    private byte sequenceId;
     private int serverStatus;
     private String serverVersion;
-
-    public Handshake10(byte sequenceId) {
-        this.sequenceId = sequenceId;
-    }
 
     public String getAuthPluginData() {
         return authPluginData;
@@ -38,11 +34,6 @@ public class Handshake10 extends Packet {
 
     public int getConnectionId() {
         return connectionId;
-    }
-
-    @Override
-    public byte getSequenceId() {
-        return sequenceId;
     }
 
     public int getServerStatus() {

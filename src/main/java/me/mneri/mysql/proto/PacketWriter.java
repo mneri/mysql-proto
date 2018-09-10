@@ -1,4 +1,4 @@
-package me.mneri.mysql.proto.packet;
+package me.mneri.mysql.proto;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -6,19 +6,19 @@ import java.io.OutputStream;
 import me.mneri.mysql.proto.exception.MalformedPacketException;
 import me.mneri.mysql.proto.util.ByteArrayBuilder;
 
-public class PacketWriter implements Closeable {
-    private OutputStream out;
+class PacketWriter implements Closeable {
+    private Context context;
 
-    public PacketWriter(OutputStream out) {
-        this.out = out;
+    PacketWriter(Context context) {
+        this.context = context;
     }
 
     @Override
     public void close() throws IOException {
-        out.close();
+        context.getOutputStream().close();
     }
 
-    public void write(Packet packet) throws IOException, MalformedPacketException {
+    void write(Packet packet) throws IOException, MalformedPacketException {
         byte[] payload = packet.payload();
 
         ByteArrayBuilder builder = new ByteArrayBuilder(4);
@@ -26,6 +26,7 @@ public class PacketWriter implements Closeable {
         builder.putInt1(packet.getSequenceId());
         byte[] header = builder.build();
 
+        OutputStream out = context.getOutputStream();
         out.write(header);
         out.write(payload);
         out.flush();

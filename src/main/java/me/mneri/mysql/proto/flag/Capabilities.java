@@ -25,6 +25,7 @@ public class Capabilities {
     public static final int CLIENT_CONNECT_ATTRS                  = 1 << 20;
     public static final int CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA = 1 << 21;
     public static final int CLIENT_CAN_HANDLE_EXPIRED_PASSWORDS   = 1 << 22;
+    public static final int CLIENT_SESSION_TRACK                  = 1 << 23;
     public static final int CLIENT_SSL_VERIFY_SERVER_CERT         = 1 << 30;
     public static final int CLIENT_REMEMBER_OPTIONS               = 1 << 31;
     //@formatter:on
