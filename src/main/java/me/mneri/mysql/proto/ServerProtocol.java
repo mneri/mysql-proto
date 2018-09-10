@@ -5,9 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import me.mneri.mysql.proto.exception.MalformedPacketException;
-import me.mneri.mysql.proto.flag.ServerStatus;
 import me.mneri.mysql.proto.packet.Handshake10;
-import me.mneri.mysql.proto.packet.HandshakeResponse;
+import me.mneri.mysql.proto.packet.HandshakeResponse41;
 import me.mneri.mysql.proto.packet.OkPacket;
 
 public class ServerProtocol {
@@ -30,15 +29,15 @@ public class ServerProtocol {
             handshake.setServerStatus   (ServerStatus.AUTOCOMMIT);
             handshake.setAuthPluginName ("mysql_native_password");
 
-            context.write(handshake);
+            context.send(handshake);
             //@formatter:on
 
-            HandshakeResponse handshakeResponse = context.read(HandshakeResponse.class);
+            HandshakeResponse41 handshakeResponse = context.receive(HandshakeResponse41.class);
 
             OkPacket ok = new OkPacket((byte) 0);
             ok.setInfo("Success");
 
-            context.write(ok);
+            context.send(ok);
 
             System.out.println("yay");
         } catch (IOException | MalformedPacketException e) {

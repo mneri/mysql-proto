@@ -1,4 +1,4 @@
-package me.mneri.mysql.proto.flag;
+package me.mneri.mysql.proto;
 
 public class ServerStatus {
     //@formatter:off

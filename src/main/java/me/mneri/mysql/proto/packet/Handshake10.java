@@ -5,7 +5,8 @@ import me.mneri.mysql.proto.exception.ProtocolMismatchException;
 import me.mneri.mysql.proto.util.ByteArrayBuilder;
 import me.mneri.mysql.proto.util.ByteArrayReader;
 
-import static me.mneri.mysql.proto.flag.Capabilities.*;
+import static me.mneri.mysql.proto.Capabilities.CLIENT_PLUGIN_AUTH;
+import static me.mneri.mysql.proto.Capabilities.CLIENT_SECURE_CONNECTION;
 
 public class Handshake10 extends Packet {
     private String authPluginData;
@@ -44,8 +45,8 @@ public class Handshake10 extends Packet {
         return serverVersion;
     }
 
-    public boolean isCapabilitySet(int cap) {
-        return (getCapabilities() & cap) != 0;
+    private boolean isCapabilitySet(int capability) {
+        return (getCapabilities() & capability) != 0;
     }
 
     @Override
@@ -87,11 +88,11 @@ public class Handshake10 extends Packet {
             throw new ProtocolMismatchException();
 
         //@formatter:off
-        setServerVersion   (reader.getNullTerminatedString());
-        setConnectionId    (reader.getInt4());
-        setAuthPluginData  (reader.getFixedLengthString(8));
-                            reader.skip(1);
-        setCapabilities    (reader.getInt2() << 16);
+        setServerVersion  (reader.getNullTerminatedString());
+        setConnectionId   (reader.getInt4());
+        setAuthPluginData (reader.getFixedLengthString(8));
+                           reader.skip(1);
+        setCapabilities   (reader.getInt2() << 16);
         //@formatter:on
 
         if (!reader.hasMore())

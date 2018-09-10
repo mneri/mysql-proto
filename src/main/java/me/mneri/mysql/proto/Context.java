@@ -22,7 +22,7 @@ public class Context {
         writer = new PacketWriter(this);
     }
 
-    public <T extends Packet> T create(Class<T> clazz, byte sequenceId) {
+    <T extends Packet> T create(Class<T> clazz, byte sequenceId) {
         try {
             T packet = clazz.newInstance();
             packet.setSequenceId(sequenceId);
@@ -50,27 +50,27 @@ public class Context {
         return (statusFlags & statusFlag) != 0;
     }
 
-    public <T extends Packet> T read(Class<T> clazz) throws IOException, MalformedPacketException {
+    <T extends Packet> T receive(Class<T> clazz) throws IOException, MalformedPacketException {
         return reader.read(clazz);
     }
 
-    public void setCapability(int capability) {
+    void send(Packet packet) throws IOException, MalformedPacketException {
+        writer.write(packet);
+    }
+
+    void setCapability(int capability) {
         capabilities |= capability;
     }
 
-    public void setStatusFlag(int statusFlag) {
+    void setStatusFlag(int statusFlag) {
         statusFlags |= statusFlag;
     }
 
-    public void unsetCapability(int capability) {
+    void unsetCapability(int capability) {
         capabilities ^= capability;
     }
 
-    public void unsetStatusFlag(int statusFlag) {
+    void unsetStatusFlag(int statusFlag) {
         statusFlags ^= statusFlag;
-    }
-
-    public void write(Packet packet) throws IOException, MalformedPacketException {
-        writer.write(packet);
     }
 }

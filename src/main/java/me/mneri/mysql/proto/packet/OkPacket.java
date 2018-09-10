@@ -3,11 +3,11 @@ package me.mneri.mysql.proto.packet;
 import me.mneri.mysql.proto.Context;
 import me.mneri.mysql.proto.Packet;
 import me.mneri.mysql.proto.exception.MalformedPacketException;
-import me.mneri.mysql.proto.flag.ServerStatus;
+import me.mneri.mysql.proto.ServerStatus;
 import me.mneri.mysql.proto.util.ByteArrayBuilder;
 import me.mneri.mysql.proto.util.ByteArrayReader;
 
-import static me.mneri.mysql.proto.flag.Capabilities.*;
+import static me.mneri.mysql.proto.Capabilities.*;
 
 public class OkPacket extends Packet {
     private long affectedRows;
