@@ -24,7 +24,7 @@ public class ServerProtocol {
             handshake.setServerVersion  ("5.5.2-m2");
             handshake.setConnectionId   (0);
             handshake.setAuthPluginData ("dvH@I-CJ*4d|cZwk4^]:");
-            handshake.setCapabilities   (0xf5ff);
+            handshake.setCapabilities   (0xf7ff);
             handshake.setCharacterSet   (0x08);
             handshake.setServerStatus   (ServerStatus.AUTOCOMMIT);
             handshake.setAuthPluginName ("mysql_native_password");
@@ -34,7 +34,7 @@ public class ServerProtocol {
 
             HandshakeResponse41 handshakeResponse = context.receive(HandshakeResponse41.class);
 
-            OkPacket ok = new OkPacket((byte) 0);
+            OkPacket ok = context.create(OkPacket.class, (byte) 0);
             ok.setInfo("Success");
 
             context.send(ok);

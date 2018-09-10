@@ -3,6 +3,7 @@ package me.mneri.mysql.proto.packet;
 import java.util.HashMap;
 import java.util.Map;
 import me.mneri.mysql.proto.Packet;
+import me.mneri.mysql.proto.exception.MalformedPacketException;
 import me.mneri.mysql.proto.util.ByteArrayBuilder;
 import me.mneri.mysql.proto.util.ByteArrayReader;
 
@@ -96,11 +97,15 @@ public class HandshakeResponse41 extends Packet {
     }
 
     @Override
-    public void payload(byte[] bytes) {
+    public void payload(byte[] bytes) throws MalformedPacketException {
         ByteArrayReader reader = new ByteArrayReader(bytes);
 
+        setCapabilities(reader.getInt4());
+
+        if (!isCapabilitySet(CLIENT_PROTOCOL_41))
+            throw new MalformedPacketException();
+
         //@formatter:off
-        setCapabilities (reader.getInt4());
         setMaxPacketSize(reader.getInt4());
         setCharacterSet (reader.getInt1());
                          reader.skip(23);
@@ -116,6 +121,10 @@ public class HandshakeResponse41 extends Packet {
 
         if (isCapabilitySet(CLIENT_CONNECT_WITH_DB))
             setDatabase(reader.getNullTerminatedString());
+
+        // XXX: The protocol specification doesn't say this
+        if (!reader.hasMore())
+            return;
 
         if (isCapabilitySet(CLIENT_PLUGIN_AUTH))
             setAuthPluginName(reader.getNullTerminatedString());

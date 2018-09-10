@@ -18,10 +18,6 @@ public class OkPacket extends Packet {
     private short statusFlags;
     private short warnings;
 
-    public OkPacket(byte sequenceId) {
-        this.sequenceId = sequenceId;
-    }
-
     public long getAffectedRows() {
         return affectedRows;
     }
