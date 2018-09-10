@@ -13,7 +13,6 @@ public class OkPacket extends Packet {
     private long affectedRows;
     private String info;
     private long lastInsertId;
-    private byte sequenceId;
     private String sessionStateInfo;
     private short statusFlags;
     private short warnings;
@@ -30,11 +29,6 @@ public class OkPacket extends Packet {
         return lastInsertId;
     }
 
-    @Override
-    public byte getSequenceId() {
-        return sequenceId;
-    }
-
     public String getSessionStateInfo() {
         return sessionStateInfo;
     }
@@ -48,7 +42,7 @@ public class OkPacket extends Packet {
     }
 
     @Override
-    public byte[] payload() throws MalformedPacketException {
+    public byte[] payload() {
         Context context = getContext();
         ByteArrayBuilder builder = new ByteArrayBuilder();
 
