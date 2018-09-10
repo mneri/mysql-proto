@@ -19,7 +19,7 @@ class PacketWriter implements Closeable {
     }
 
     void write(Packet packet) throws IOException, MalformedPacketException {
-        byte[] payload = packet.payload();
+        byte[] payload = packet.serialize();
 
         ByteArrayBuilder builder = new ByteArrayBuilder(4);
         builder.putInt3(payload.length);

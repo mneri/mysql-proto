@@ -12,7 +12,7 @@ public class Context {
     private InputStream in;
     private OutputStream out;
     private PacketReader reader;
-    private int statusFlags;
+    private int status;
     private PacketWriter writer;
 
     Context(InputStream in, OutputStream out) {
@@ -47,7 +47,7 @@ public class Context {
     }
 
     public boolean isStatusFlagSet(int statusFlag) {
-        return (statusFlags & statusFlag) != 0;
+        return (status & statusFlag) != 0;
     }
 
     <T extends Packet> T receive(Class<T> clazz) throws IOException, MalformedPacketException {
@@ -62,8 +62,8 @@ public class Context {
         capabilities |= capability;
     }
 
-    void setStatusFlag(int statusFlag) {
-        statusFlags |= statusFlag;
+    void setStatus(int status) {
+        this.status |= status;
     }
 
     void unsetCapability(int capability) {
@@ -71,6 +71,6 @@ public class Context {
     }
 
     void unsetStatusFlag(int statusFlag) {
-        statusFlags ^= statusFlag;
+        status ^= statusFlag;
     }
 }

@@ -56,7 +56,7 @@ public class HandshakeResponse41 extends Packet {
     }
 
     @Override
-    public byte[] payload() {
+    public byte[] serialize() {
         ByteArrayBuilder builder = new ByteArrayBuilder();
 
         //@formatter:off
@@ -97,8 +97,8 @@ public class HandshakeResponse41 extends Packet {
     }
 
     @Override
-    public void payload(byte[] bytes) throws MalformedPacketException {
-        ByteArrayReader reader = new ByteArrayReader(bytes);
+    public void deserialize(byte[] payload) throws MalformedPacketException {
+        ByteArrayReader reader = new ByteArrayReader(payload);
 
         setCapabilities(reader.getInt4());
 

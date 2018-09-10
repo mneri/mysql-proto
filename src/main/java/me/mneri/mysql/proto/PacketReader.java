@@ -37,7 +37,7 @@ class PacketReader implements Closeable {
             byte[] buff = new byte[length];
             in.read(buff, 0, length);
 
-            packet.payload(buff);
+            packet.deserialize(buff);
 
             return packet;
             //@formatter:off

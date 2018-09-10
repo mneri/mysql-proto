@@ -23,7 +23,7 @@ public class Handshake9 extends Packet {
     }
 
     @Override
-    public byte[] payload() {
+    public byte[] serialize() {
         ByteArrayBuilder builder = new ByteArrayBuilder();
 
         //@formatter:off
@@ -37,8 +37,8 @@ public class Handshake9 extends Packet {
     }
 
     @Override
-    public void payload(byte[] bytes) {
-        ByteArrayReader reader = new ByteArrayReader(bytes);
+    public void deserialize(byte[] payload) {
+        ByteArrayReader reader = new ByteArrayReader(payload);
 
         if (reader.getInt1() != 9)
             throw new ProtocolMismatchException();

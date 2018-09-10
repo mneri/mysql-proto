@@ -42,7 +42,7 @@ public class OkPacket extends Packet {
     }
 
     @Override
-    public byte[] payload() {
+    public byte[] serialize() {
         Context context = getContext();
         ByteArrayBuilder builder = new ByteArrayBuilder();
 
@@ -72,9 +72,9 @@ public class OkPacket extends Packet {
     }
 
     @Override
-    public void payload(byte[] bytes) throws MalformedPacketException {
+    public void deserialize(byte[] payload) throws MalformedPacketException {
         Context context = getContext();
-        ByteArrayReader reader = new ByteArrayReader(bytes);
+        ByteArrayReader reader = new ByteArrayReader(payload);
 
         int header = reader.getInt1();
 

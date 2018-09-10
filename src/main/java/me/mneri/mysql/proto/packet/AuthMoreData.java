@@ -13,7 +13,7 @@ public class AuthMoreData extends Packet {
     }
 
     @Override
-    public byte[] payload() throws MalformedPacketException {
+    public byte[] serialize() throws MalformedPacketException {
         ByteArrayBuilder builder = new ByteArrayBuilder();
 
         builder.putInt1((byte) 1);
@@ -23,8 +23,8 @@ public class AuthMoreData extends Packet {
     }
 
     @Override
-    public void payload(byte[] bytes) throws MalformedPacketException {
-        ByteArrayReader reader = new ByteArrayReader(bytes);
+    public void deserialize(byte[] payload) throws MalformedPacketException {
+        ByteArrayReader reader = new ByteArrayReader(payload);
 
         if (reader.getInt1() != 1)
             throw new MalformedPacketException();

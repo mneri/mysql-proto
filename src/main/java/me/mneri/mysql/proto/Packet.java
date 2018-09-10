@@ -6,6 +6,8 @@ public abstract class Packet {
     private Context context;
     private byte sequenceId;
 
+    public abstract void deserialize(byte[] payload) throws MalformedPacketException;
+
     protected Context getContext() {
         return context;
     }
@@ -14,9 +16,7 @@ public abstract class Packet {
         return sequenceId;
     }
 
-    public abstract void payload(byte[] bytes) throws MalformedPacketException;
-
-    public abstract byte[] payload() throws MalformedPacketException;
+    public abstract byte[] serialize() throws MalformedPacketException;
 
     void setContext(Context context) {
         this.context = context;
