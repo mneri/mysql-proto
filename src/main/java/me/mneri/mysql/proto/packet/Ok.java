@@ -9,7 +9,7 @@ import me.mneri.mysql.proto.util.ByteArrayReader;
 
 import static me.mneri.mysql.proto.Capabilities.*;
 
-public class OkPacket extends Packet {
+public class Ok extends Packet {
     private long affectedRows;
     private String info;
     private long lastInsertId;
