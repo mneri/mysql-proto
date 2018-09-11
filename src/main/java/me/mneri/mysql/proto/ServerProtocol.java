@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import java.util.Base64;
 import me.mneri.mysql.proto.exception.MalformedPacketException;
-import me.mneri.mysql.proto.packet.Handshake10;
-import me.mneri.mysql.proto.packet.HandshakeResponse41;
-import me.mneri.mysql.proto.packet.OkPacket;
+import me.mneri.mysql.proto.packet.*;
+
+import static me.mneri.mysql.proto.Capabilities.*;
 
 public class ServerProtocol {
     private Context context;
@@ -24,7 +25,7 @@ public class ServerProtocol {
             handshake.setServerVersion  ("5.5.2-m2");
             handshake.setConnectionId   (0);
             handshake.setAuthPluginData ("dvH@I-CJ*4d|cZwk4^]:");
-            handshake.setCapabilities   (0xf7ff);
+            handshake.setCapabilities   (0xf7ff | CLIENT_PLUGIN_AUTH ^ CLIENT_SECURE_CONNECTION);
             handshake.setCharacterSet   (0x08);
             handshake.setServerStatus   (ServerStatus.AUTOCOMMIT);
             handshake.setAuthPluginName ("mysql_native_password");
@@ -33,13 +34,12 @@ public class ServerProtocol {
             //@formatter:on
 
             HandshakeResponse41 handshakeResponse = context.receive(HandshakeResponse41.class);
+            handshakeResponse.toString();
 
-            OkPacket ok = context.create(OkPacket.class, (byte) 0);
-            ok.setInfo("Success");
-
+            OkPacket ok = context.create(OkPacket.class, (byte) 2);
+            ok.setInfo("Login successful");
             context.send(ok);
-
-            System.out.println("yay");
+            System.out.println("end");
         } catch (IOException | MalformedPacketException e) {
             e.printStackTrace();
         }

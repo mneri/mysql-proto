@@ -19,6 +19,54 @@ public class HandshakeResponse41 extends Packet {
     private int maxPacketSize;
     private String username;
 
+    @Override
+    public void deserialize(byte[] payload) throws MalformedPacketException {
+        ByteArrayReader reader = new ByteArrayReader(payload);
+
+        setCapabilities(reader.getInt4());
+
+        if (!isCapabilitySet(CLIENT_PROTOCOL_41))
+            throw new MalformedPacketException();
+
+        //@formatter:off
+        setMaxPacketSize (reader.getInt4());
+        setCharacterSet  (reader.getInt1());
+                          reader.skip(23);
+        setUsername      (reader.getNullTerminatedString());
+        //@formatter:on
+
+        if (isCapabilitySet(CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA)) {
+            setAuthResponse(reader.getLengthEncodedString());
+        } else {
+            int length = reader.getInt1();
+            setAuthResponse(reader.getFixedLengthString(length));
+        }
+
+        if (isCapabilitySet(CLIENT_CONNECT_WITH_DB))
+            setDatabase(reader.getNullTerminatedString());
+
+        // XXX: Not in the protocol specification
+        if (!reader.hasMore())
+            return;
+
+        if (isCapabilitySet(CLIENT_PLUGIN_AUTH))
+            setAuthPluginName(reader.getNullTerminatedString());
+
+        // XXX: Not in the protocol specification
+        if (!reader.hasMore())
+            return;
+
+        if (isCapabilitySet(CLIENT_CONNECT_ATTRS)) {
+            int size = (int) reader.getLengthEncodedInt();
+            Map<String, String> connectAttributes = new HashMap<>();
+
+            for (int i = 0; i < size; i++)
+                connectAttributes.put(reader.getLengthEncodedString(), reader.getLengthEncodedString());
+
+            setConnectAttributes(connectAttributes);
+        }
+    }
+
     public String getAuthPluginName() {
         return authPluginName;
     }
@@ -94,50 +142,6 @@ public class HandshakeResponse41 extends Packet {
         }
 
         return builder.build();
-    }
-
-    @Override
-    public void deserialize(byte[] payload) throws MalformedPacketException {
-        ByteArrayReader reader = new ByteArrayReader(payload);
-
-        setCapabilities(reader.getInt4());
-
-        if (!isCapabilitySet(CLIENT_PROTOCOL_41))
-            throw new MalformedPacketException();
-
-        //@formatter:off
-        setMaxPacketSize (reader.getInt4());
-        setCharacterSet  (reader.getInt1());
-                          reader.skip(23);
-        setUsername      (reader.getNullTerminatedString());
-        //@formatter:on
-
-        if (isCapabilitySet(CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA)) {
-            setAuthResponse(reader.getLengthEncodedString());
-        } else {
-            int length = reader.getInt1();
-            setAuthResponse(reader.getFixedLengthString(length));
-        }
-
-        if (isCapabilitySet(CLIENT_CONNECT_WITH_DB))
-            setDatabase(reader.getNullTerminatedString());
-
-        // XXX: Not in the protocol specification
-        if (!reader.hasMore())
-            return;
-
-        if (isCapabilitySet(CLIENT_PLUGIN_AUTH))
-            setAuthPluginName(reader.getNullTerminatedString());
-
-        if (isCapabilitySet(CLIENT_CONNECT_ATTRS)) {
-            int size = (int) reader.getLengthEncodedInt();
-            Map<String, String> connectAttributes = new HashMap<>();
-
-            for (int i = 0; i < size; i++)
-                connectAttributes.put(reader.getLengthEncodedString(), reader.getLengthEncodedString());
-
-            setConnectAttributes(connectAttributes);
-        }
     }
 
     public void setAuthPluginName(String authPluginName) {
