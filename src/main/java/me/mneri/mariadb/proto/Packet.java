@@ -1,6 +1,6 @@
-package me.mneri.mysql.proto;
+package me.mneri.mariadb.proto;
 
-import me.mneri.mysql.proto.exception.MalformedPacketException;
+import me.mneri.mariadb.proto.exception.MalformedPacketException;
 
 public abstract class Packet {
     private Context context;

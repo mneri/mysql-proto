@@ -1,4 +1,4 @@
-package me.mneri.mysql.proto;
+package me.mneri.mariadb.proto;
 
 public class Capabilities {
     //@formatter:off

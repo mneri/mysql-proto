@@ -1,13 +1,12 @@
-package me.mneri.mysql.proto.packet;
+package me.mneri.mariadb.proto.packet;
 
-import me.mneri.mysql.proto.Context;
-import me.mneri.mysql.proto.Packet;
-import me.mneri.mysql.proto.exception.MalformedPacketException;
-import me.mneri.mysql.proto.ServerStatus;
-import me.mneri.mysql.proto.util.ByteArrayBuilder;
-import me.mneri.mysql.proto.util.ByteArrayReader;
-
-import static me.mneri.mysql.proto.Capabilities.*;
+import me.mneri.mariadb.proto.Capabilities;
+import me.mneri.mariadb.proto.Context;
+import me.mneri.mariadb.proto.Packet;
+import me.mneri.mariadb.proto.ServerStatus;
+import me.mneri.mariadb.proto.util.ByteArrayBuilder;
+import me.mneri.mariadb.proto.util.ByteArrayReader;
+import me.mneri.mariadb.proto.exception.MalformedPacketException;
 
 public class Ok extends Packet {
     private long affectedRows;
@@ -52,14 +51,14 @@ public class Ok extends Packet {
         builder.putLengthEncodedInt (getLastInsertId());
         //@formatter:on
 
-        if (context.isCapabilitySet(CLIENT_PROTOCOL_41)) {
+        if (context.isCapabilitySet(Capabilities.CLIENT_PROTOCOL_41)) {
             builder.putInt2(getStatusFlags());
             builder.putInt2(getWarnings());
-        } else if (context.isCapabilitySet(CLIENT_TRANSACTIONS)) {
+        } else if (context.isCapabilitySet(Capabilities.CLIENT_TRANSACTIONS)) {
             builder.putInt2(getStatusFlags());
         }
 
-        if (context.isCapabilitySet(CLIENT_SESSION_TRACK)) {
+        if (context.isCapabilitySet(Capabilities.CLIENT_SESSION_TRACK)) {
             builder.putLengthEncodedString(getInfo());
 
             if (context.isStatusFlagSet(ServerStatus.SESSION_STATE_CHANGED))
@@ -84,14 +83,14 @@ public class Ok extends Packet {
         setAffectedRows(reader.getLengthEncodedInt());
         setLastInsertId(reader.getLengthEncodedInt());
 
-        if (context.isCapabilitySet(CLIENT_PROTOCOL_41)) {
+        if (context.isCapabilitySet(Capabilities.CLIENT_PROTOCOL_41)) {
             setStatusFlags(reader.getInt2());
             setWarnings(reader.getInt2());
-        } else if (context.isCapabilitySet(CLIENT_TRANSACTIONS)) {
+        } else if (context.isCapabilitySet(Capabilities.CLIENT_TRANSACTIONS)) {
             setStatusFlags(reader.getInt2());
         }
 
-        if (context.isCapabilitySet(CLIENT_SESSION_TRACK)) {
+        if (context.isCapabilitySet(Capabilities.CLIENT_SESSION_TRACK)) {
             setInfo(reader.getLengthEncodedString());
 
             if (context.isStatusFlagSet(ServerStatus.SESSION_STATE_CHANGED))

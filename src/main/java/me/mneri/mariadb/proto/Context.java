@@ -1,11 +1,11 @@
-package me.mneri.mysql.proto;
+package me.mneri.mariadb.proto;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import me.mneri.mysql.proto.exception.InternalProtocolException;
-import me.mneri.mysql.proto.exception.MalformedPacketException;
+import me.mneri.mariadb.proto.exception.InternalProtocolException;
+import me.mneri.mariadb.proto.exception.MalformedPacketException;
 
 public class Context {
     private int capabilities;

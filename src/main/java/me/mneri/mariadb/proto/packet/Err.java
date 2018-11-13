@@ -1,12 +1,11 @@
-package me.mneri.mysql.proto.packet;
+package me.mneri.mariadb.proto.packet;
 
-import me.mneri.mysql.proto.Context;
-import me.mneri.mysql.proto.Packet;
-import me.mneri.mysql.proto.exception.MalformedPacketException;
-import me.mneri.mysql.proto.util.ByteArrayBuilder;
-import me.mneri.mysql.proto.util.ByteArrayReader;
-
-import static me.mneri.mysql.proto.Capabilities.*;
+import me.mneri.mariadb.proto.Capabilities;
+import me.mneri.mariadb.proto.Context;
+import me.mneri.mariadb.proto.Packet;
+import me.mneri.mariadb.proto.exception.MalformedPacketException;
+import me.mneri.mariadb.proto.util.ByteArrayBuilder;
+import me.mneri.mariadb.proto.util.ByteArrayReader;
 
 public class Err extends Packet {
     private short errorCode;
@@ -24,7 +23,7 @@ public class Err extends Packet {
 
         setErrorCode(reader.getInt2());
 
-        if (context.isCapabilitySet(CLIENT_PROTOCOL_41)) {
+        if (context.isCapabilitySet(Capabilities.CLIENT_PROTOCOL_41)) {
             //@formatter:off
             setSqlStateMarker (reader.getFixedLengthString(1));
             setSqlState       (reader.getFixedLengthString(5));
@@ -58,7 +57,7 @@ public class Err extends Packet {
         builder.putInt1((byte) 0xFF);
         builder.putInt2(getErrorCode());
 
-        if (context.isCapabilitySet(CLIENT_PROTOCOL_41)) {
+        if (context.isCapabilitySet(Capabilities.CLIENT_PROTOCOL_41)) {
             builder.putFixedLengthString(getSqlStateMarker(), 1);
             builder.putFixedLengthString(getSqlState(), 5);
         }

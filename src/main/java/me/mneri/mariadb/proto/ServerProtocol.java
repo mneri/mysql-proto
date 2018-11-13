@@ -1,13 +1,16 @@
-package me.mneri.mysql.proto;
+package me.mneri.mariadb.proto;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import me.mneri.mysql.proto.exception.MalformedPacketException;
+import me.mneri.mariadb.proto.exception.MalformedPacketException;
+import me.mneri.mariadb.proto.packet.Handshake10;
+import me.mneri.mariadb.proto.packet.HandshakeResponse41;
+import me.mneri.mariadb.proto.packet.Ok;
 import me.mneri.mysql.proto.packet.*;
 
-import static me.mneri.mysql.proto.Capabilities.*;
+import static me.mneri.mariadb.proto.Capabilities.*;
 
 public class ServerProtocol {
     private Context context;

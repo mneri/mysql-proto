@@ -1,11 +1,11 @@
-package me.mneri.mysql.proto;
+package me.mneri.mariadb.proto;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import me.mneri.mysql.proto.exception.InternalProtocolException;
-import me.mneri.mysql.proto.exception.MalformedPacketException;
-import me.mneri.mysql.proto.util.ByteArrayReader;
+import me.mneri.mariadb.proto.exception.InternalProtocolException;
+import me.mneri.mariadb.proto.exception.MalformedPacketException;
+import me.mneri.mariadb.proto.util.ByteArrayReader;
 
 class PacketReader implements Closeable {
     private Context context;

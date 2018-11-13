@@ -1,4 +1,4 @@
-package me.mneri.mysql.proto.exception;
+package me.mneri.mariadb.proto.exception;
 
 public class MalformedPacketException extends ProtocolException {
 }

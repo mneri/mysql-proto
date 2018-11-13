@@ -1,4 +1,4 @@
-package me.mneri.mysql.proto.util;
+package me.mneri.mariadb.proto.util;
 
 public class ByteArrayReader {
     private byte[] bytes;

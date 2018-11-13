@@ -1,9 +1,9 @@
-package me.mneri.mysql.proto.packet;
+package me.mneri.mariadb.proto.packet;
 
-import me.mneri.mysql.proto.Packet;
-import me.mneri.mysql.proto.exception.ProtocolMismatchException;
-import me.mneri.mysql.proto.util.ByteArrayBuilder;
-import me.mneri.mysql.proto.util.ByteArrayReader;
+import me.mneri.mariadb.proto.Packet;
+import me.mneri.mariadb.proto.util.ByteArrayBuilder;
+import me.mneri.mariadb.proto.util.ByteArrayReader;
+import me.mneri.mariadb.proto.exception.ProtocolMismatchException;
 
 public class Handshake9 extends Packet {
     private int connectionId;

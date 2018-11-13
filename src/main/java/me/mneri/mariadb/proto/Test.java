@@ -1,4 +1,4 @@
-package me.mneri.mysql.proto;
+package me.mneri.mariadb.proto;
 
 import java.io.IOException;
 import java.net.ServerSocket;

@@ -1,6 +1,6 @@
-package me.mneri.mysql.proto.packet;
+package me.mneri.mariadb.proto.packet;
 
-import me.mneri.mysql.proto.Packet;
+import me.mneri.mariadb.proto.Packet;
 
 public class ComQuit extends Packet {
     @Override
