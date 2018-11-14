@@ -25,8 +25,9 @@ public class HandshakeResponse41 extends Packet {
 
         setCapabilities(reader.getInt4());
 
-        if (!isCapabilitySet(Capabilities.CLIENT_PROTOCOL_41))
+        if (!isCapabilitySet(Capabilities.CLIENT_PROTOCOL_41)) {
             throw new MalformedPacketException();
+        }
 
         //@formatter:off
         setMaxPacketSize (reader.getInt4());
