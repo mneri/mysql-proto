@@ -9,7 +9,7 @@ import me.mneri.mariadb.proto.util.ByteArrayReader;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HandshakeResponse41 extends Packet {
+public class HandshakeResponse41Packet extends Packet {
     private String authPluginName;
     private String authResponse;
     private int capabilities;

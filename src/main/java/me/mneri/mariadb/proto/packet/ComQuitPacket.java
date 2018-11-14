@@ -2,7 +2,7 @@ package me.mneri.mariadb.proto.packet;
 
 import me.mneri.mariadb.proto.Packet;
 
-public class ComQuit extends Packet {
+public class ComQuitPacket extends Packet {
     @Override
     public void deserialize(byte[] payload) {
     }

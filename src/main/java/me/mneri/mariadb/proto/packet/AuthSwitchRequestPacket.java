@@ -5,7 +5,7 @@ import me.mneri.mariadb.proto.exception.MalformedPacketException;
 import me.mneri.mariadb.proto.util.ByteArrayWriter;
 import me.mneri.mariadb.proto.util.ByteArrayReader;
 
-public class AuthSwitchRequest extends Packet {
+public class AuthSwitchRequestPacket extends Packet {
     private String pluginName;
     private String pluginProvidedData;
 

@@ -6,7 +6,7 @@ import me.mneri.mariadb.proto.exception.ProtocolMismatchException;
 import me.mneri.mariadb.proto.util.ByteArrayWriter;
 import me.mneri.mariadb.proto.util.ByteArrayReader;
 
-public class Handshake10 extends Packet {
+public class Handshake10Packet extends Packet {
     private String authPluginData;
     private String authPluginName;
     private int capabilities;

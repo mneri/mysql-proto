@@ -5,7 +5,7 @@ import me.mneri.mariadb.proto.exception.ProtocolMismatchException;
 import me.mneri.mariadb.proto.util.ByteArrayWriter;
 import me.mneri.mariadb.proto.util.ByteArrayReader;
 
-public class Handshake9 extends Packet {
+public class Handshake9Packet extends Packet {
     private int connectionId;
     private String scramble;
     private String serverVersion;

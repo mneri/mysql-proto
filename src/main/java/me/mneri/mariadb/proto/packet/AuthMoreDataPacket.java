@@ -5,7 +5,7 @@ import me.mneri.mariadb.proto.exception.MalformedPacketException;
 import me.mneri.mariadb.proto.util.ByteArrayWriter;
 import me.mneri.mariadb.proto.util.ByteArrayReader;
 
-public class AuthMoreData extends Packet {
+public class AuthMoreDataPacket extends Packet {
     private String data;
 
     @Override
