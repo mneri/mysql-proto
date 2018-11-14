@@ -1,6 +1,6 @@
 package me.mneri.mariadb.proto;
 
-public class CharacterSet {
+public final class CharacterSet {
     //@formatter:off
     public static final int BIG5_CHINESE_CI          = 1;
     public static final int LATIN2_CZECH_CS          = 2;

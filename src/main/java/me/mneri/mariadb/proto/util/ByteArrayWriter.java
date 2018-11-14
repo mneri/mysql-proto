@@ -1,10 +1,10 @@
 package me.mneri.mariadb.proto.util;
 
-public class ByteArrayReader {
+public class ByteArrayWriter {
     private byte[] bytes;
     private int offset;
 
-    public ByteArrayReader(byte[] buff) {
+    public ByteArrayWriter(byte[] buff) {
         this.bytes = buff;
     }
 

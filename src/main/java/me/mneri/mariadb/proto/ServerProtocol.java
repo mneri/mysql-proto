@@ -1,16 +1,16 @@
 package me.mneri.mariadb.proto;
 
+import me.mneri.mariadb.proto.exception.MalformedPacketException;
+import me.mneri.mariadb.proto.packet.Handshake10;
+import me.mneri.mariadb.proto.packet.HandshakeResponse41;
+import me.mneri.mariadb.proto.packet.OkPacket;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import me.mneri.mariadb.proto.exception.MalformedPacketException;
-import me.mneri.mariadb.proto.packet.Handshake10;
-import me.mneri.mariadb.proto.packet.HandshakeResponse41;
-import me.mneri.mariadb.proto.packet.Ok;
-import me.mneri.mysql.proto.packet.*;
-
-import static me.mneri.mariadb.proto.Capabilities.*;
+import static me.mneri.mariadb.proto.Capabilities.CLIENT_PLUGIN_AUTH;
+import static me.mneri.mariadb.proto.Capabilities.CLIENT_SECURE_CONNECTION;
 
 public class ServerProtocol {
     private Context context;
@@ -38,7 +38,7 @@ public class ServerProtocol {
             HandshakeResponse41 handshakeResponse = context.receive(HandshakeResponse41.class);
             handshakeResponse.toString();
 
-            Ok ok = context.create(Ok.class, (byte) 2);
+            OkPacket ok = context.create(OkPacket.class, (byte) 2);
             ok.setInfo("Login successful");
             context.send(ok);
             System.out.println("end");

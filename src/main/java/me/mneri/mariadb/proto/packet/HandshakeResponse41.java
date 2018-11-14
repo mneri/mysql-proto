@@ -1,13 +1,13 @@
 package me.mneri.mariadb.proto.packet;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import me.mneri.mariadb.proto.Capabilities;
 import me.mneri.mariadb.proto.Packet;
 import me.mneri.mariadb.proto.exception.MalformedPacketException;
 import me.mneri.mariadb.proto.util.ByteArrayBuilder;
-import me.mneri.mariadb.proto.util.ByteArrayReader;
+import me.mneri.mariadb.proto.util.ByteArrayWriter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class HandshakeResponse41 extends Packet {
     private String authPluginName;
@@ -21,7 +21,7 @@ public class HandshakeResponse41 extends Packet {
 
     @Override
     public void deserialize(byte[] payload) throws MalformedPacketException {
-        ByteArrayReader reader = new ByteArrayReader(payload);
+        ByteArrayWriter reader = new ByteArrayWriter(payload);
 
         setCapabilities(reader.getInt4());
 
@@ -42,26 +42,30 @@ public class HandshakeResponse41 extends Packet {
             setAuthResponse(reader.getFixedLengthString(length));
         }
 
-        if (isCapabilitySet(Capabilities.CLIENT_CONNECT_WITH_DB))
+        if (isCapabilitySet(Capabilities.CLIENT_CONNECT_WITH_DB)) {
             setDatabase(reader.getNullTerminatedString());
+        }
 
         // XXX: Not in the protocol specification
-        if (!reader.hasMore())
+        if (!reader.hasMore()) {
             return;
+        }
 
         if (isCapabilitySet(Capabilities.CLIENT_PLUGIN_AUTH))
             setAuthPluginName(reader.getNullTerminatedString());
 
         // XXX: Not in the protocol specification
-        if (!reader.hasMore())
+        if (!reader.hasMore()) {
             return;
+        }
 
         if (isCapabilitySet(Capabilities.CLIENT_CONNECT_ATTRS)) {
             int size = (int) reader.getLengthEncodedInt();
             Map<String, String> connectAttributes = new HashMap<>();
 
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++) {
                 connectAttributes.put(reader.getLengthEncodedString(), reader.getLengthEncodedString());
+            }
 
             setConnectAttributes(connectAttributes);
         }
@@ -71,32 +75,64 @@ public class HandshakeResponse41 extends Packet {
         return authPluginName;
     }
 
+    public void setAuthPluginName(String authPluginName) {
+        this.authPluginName = authPluginName;
+    }
+
     public String getAuthResponse() {
         return authResponse;
+    }
+
+    public void setAuthResponse(String authResponse) {
+        this.authResponse = authResponse;
     }
 
     public int getCapabilities() {
         return capabilities;
     }
 
+    public void setCapabilities(int capabilities) {
+        this.capabilities = capabilities;
+    }
+
     public byte getCharacterSet() {
         return characterSet;
+    }
+
+    public void setCharacterSet(byte characterSet) {
+        this.characterSet = characterSet;
     }
 
     public Map<String, String> getConnectAttributes() {
         return connectAttributes;
     }
 
+    public void setConnectAttributes(Map<String, String> connectAttributes) {
+        this.connectAttributes = connectAttributes;
+    }
+
     public String getDatabase() {
         return database;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
     }
 
     public int getMaxPacketSize() {
         return maxPacketSize;
     }
 
+    public void setMaxPacketSize(int maxPacketSize) {
+        this.maxPacketSize = maxPacketSize;
+    }
+
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     private boolean isCapabilitySet(int capability) {
@@ -123,11 +159,13 @@ public class HandshakeResponse41 extends Packet {
             builder.putFixedLengthString(getAuthResponse(), length);
         }
 
-        if (isCapabilitySet(Capabilities.CLIENT_CONNECT_WITH_DB))
+        if (isCapabilitySet(Capabilities.CLIENT_CONNECT_WITH_DB)) {
             builder.putNullTerminatedString(getDatabase());
+        }
 
-        if (isCapabilitySet(Capabilities.CLIENT_PLUGIN_AUTH))
+        if (isCapabilitySet(Capabilities.CLIENT_PLUGIN_AUTH)) {
             builder.putNullTerminatedString(getAuthPluginName());
+        }
 
         if (isCapabilitySet(Capabilities.CLIENT_CONNECT_ATTRS)) {
             Map<String, String> connectAttributes = getConnectAttributes();
@@ -142,37 +180,5 @@ public class HandshakeResponse41 extends Packet {
         }
 
         return builder.build();
-    }
-
-    public void setAuthPluginName(String authPluginName) {
-        this.authPluginName = authPluginName;
-    }
-
-    public void setAuthResponse(String authResponse) {
-        this.authResponse = authResponse;
-    }
-
-    public void setCapabilities(int capabilities) {
-        this.capabilities = capabilities;
-    }
-
-    public void setCharacterSet(byte characterSet) {
-        this.characterSet = characterSet;
-    }
-
-    public void setConnectAttributes(Map<String, String> connectAttributes) {
-        this.connectAttributes = connectAttributes;
-    }
-
-    public void setDatabase(String database) {
-        this.database = database;
-    }
-
-    public void setMaxPacketSize(int maxPacketSize) {
-        this.maxPacketSize = maxPacketSize;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 }

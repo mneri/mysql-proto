@@ -3,7 +3,7 @@ package me.mneri.mariadb.proto.packet;
 import me.mneri.mariadb.proto.Packet;
 import me.mneri.mariadb.proto.exception.MalformedPacketException;
 import me.mneri.mariadb.proto.util.ByteArrayBuilder;
-import me.mneri.mariadb.proto.util.ByteArrayReader;
+import me.mneri.mariadb.proto.util.ByteArrayWriter;
 
 public class AuthSwitchRequest extends Packet {
     private String pluginName;
@@ -11,7 +11,7 @@ public class AuthSwitchRequest extends Packet {
 
     @Override
     public void deserialize(byte[] payload) throws MalformedPacketException {
-        ByteArrayReader reader = new ByteArrayReader(payload);
+        ByteArrayWriter reader = new ByteArrayWriter(payload);
 
         if ((reader.getInt1() & 0xFF) != 0xFE)
             throw new MalformedPacketException();
@@ -26,12 +26,20 @@ public class AuthSwitchRequest extends Packet {
         return pluginName;
     }
 
+    public void setPluginName(String pluginName) {
+        this.pluginName = pluginName;
+    }
+
     public String getPluginProvidedData() {
         return pluginProvidedData;
     }
 
+    public void setPluginProvidedData(String pluginProvidedData) {
+        this.pluginProvidedData = pluginProvidedData;
+    }
+
     @Override
-    public byte[] serialize() throws MalformedPacketException {
+    public byte[] serialize() {
         ByteArrayBuilder builder = new ByteArrayBuilder();
 
         //@formatter:off
@@ -41,13 +49,5 @@ public class AuthSwitchRequest extends Packet {
         //@formatter:on
 
         return builder.build();
-    }
-
-    public void setPluginName(String pluginName) {
-        this.pluginName = pluginName;
-    }
-
-    public void setPluginProvidedData(String pluginProvidedData) {
-        this.pluginProvidedData = pluginProvidedData;
     }
 }
