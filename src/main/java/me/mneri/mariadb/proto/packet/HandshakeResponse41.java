@@ -52,8 +52,9 @@ public class HandshakeResponse41 extends Packet {
             return;
         }
 
-        if (isCapabilitySet(Capabilities.CLIENT_PLUGIN_AUTH))
+        if (isCapabilitySet(Capabilities.CLIENT_PLUGIN_AUTH)) {
             setAuthPluginName(reader.getNullTerminatedString());
+        }
 
         // XXX: Not in the protocol specification
         if (!reader.hasMore()) {
