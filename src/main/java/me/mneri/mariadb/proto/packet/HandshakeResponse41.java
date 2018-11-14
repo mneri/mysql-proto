@@ -3,8 +3,8 @@ package me.mneri.mariadb.proto.packet;
 import me.mneri.mariadb.proto.Capabilities;
 import me.mneri.mariadb.proto.Packet;
 import me.mneri.mariadb.proto.exception.MalformedPacketException;
-import me.mneri.mariadb.proto.util.ByteArrayBuilder;
 import me.mneri.mariadb.proto.util.ByteArrayWriter;
+import me.mneri.mariadb.proto.util.ByteArrayReader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +21,7 @@ public class HandshakeResponse41 extends Packet {
 
     @Override
     public void deserialize(byte[] payload) throws MalformedPacketException {
-        ByteArrayWriter reader = new ByteArrayWriter(payload);
+        ByteArrayReader reader = new ByteArrayReader(payload);
 
         setCapabilities(reader.getInt4());
 
@@ -143,7 +143,7 @@ public class HandshakeResponse41 extends Packet {
 
     @Override
     public byte[] serialize() {
-        ByteArrayBuilder builder = new ByteArrayBuilder();
+        ByteArrayWriter builder = new ByteArrayWriter();
 
         //@formatter:off
         builder.putInt4                 (getCapabilities());

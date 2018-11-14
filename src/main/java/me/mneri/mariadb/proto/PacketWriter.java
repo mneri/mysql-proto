@@ -4,7 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import me.mneri.mariadb.proto.exception.MalformedPacketException;
-import me.mneri.mariadb.proto.util.ByteArrayBuilder;
+import me.mneri.mariadb.proto.util.ByteArrayWriter;
 
 class PacketWriter implements Closeable {
     private Context context;
@@ -21,7 +21,7 @@ class PacketWriter implements Closeable {
     void write(Packet packet) throws IOException, MalformedPacketException {
         byte[] payload = packet.serialize();
 
-        ByteArrayBuilder builder = new ByteArrayBuilder(4);
+        ByteArrayWriter builder = new ByteArrayWriter(4);
         builder.putInt3(payload.length);
         builder.putInt1(packet.getSequenceId());
         byte[] header = builder.build();

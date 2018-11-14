@@ -2,8 +2,8 @@ package me.mneri.mariadb.proto.packet;
 
 import me.mneri.mariadb.proto.Packet;
 import me.mneri.mariadb.proto.exception.ProtocolMismatchException;
-import me.mneri.mariadb.proto.util.ByteArrayBuilder;
 import me.mneri.mariadb.proto.util.ByteArrayWriter;
+import me.mneri.mariadb.proto.util.ByteArrayReader;
 
 public class Handshake9 extends Packet {
     private int connectionId;
@@ -12,7 +12,7 @@ public class Handshake9 extends Packet {
 
     @Override
     public void deserialize(byte[] payload) {
-        ByteArrayWriter reader = new ByteArrayWriter(payload);
+        ByteArrayReader reader = new ByteArrayReader(payload);
 
         if (reader.getInt1() != 9) {
             throw new ProtocolMismatchException();
@@ -51,7 +51,7 @@ public class Handshake9 extends Packet {
 
     @Override
     public byte[] serialize() {
-        ByteArrayBuilder builder = new ByteArrayBuilder();
+        ByteArrayWriter builder = new ByteArrayWriter();
 
         //@formatter:off
         builder.putInt1                 ((byte) 9);

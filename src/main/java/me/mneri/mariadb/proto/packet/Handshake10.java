@@ -3,8 +3,8 @@ package me.mneri.mariadb.proto.packet;
 import me.mneri.mariadb.proto.Capabilities;
 import me.mneri.mariadb.proto.Packet;
 import me.mneri.mariadb.proto.exception.ProtocolMismatchException;
-import me.mneri.mariadb.proto.util.ByteArrayBuilder;
 import me.mneri.mariadb.proto.util.ByteArrayWriter;
+import me.mneri.mariadb.proto.util.ByteArrayReader;
 
 public class Handshake10 extends Packet {
     private String authPluginData;
@@ -16,7 +16,7 @@ public class Handshake10 extends Packet {
     private String serverVersion;
 
     public void deserialize(byte[] payload) {
-        ByteArrayWriter reader = new ByteArrayWriter(payload);
+        ByteArrayReader reader = new ByteArrayReader(payload);
 
         if (reader.getInt1() != 10) {
             throw new ProtocolMismatchException();
@@ -121,7 +121,7 @@ public class Handshake10 extends Packet {
 
     @Override
     public byte[] serialize() {
-        ByteArrayBuilder builder = new ByteArrayBuilder();
+        ByteArrayWriter builder = new ByteArrayWriter();
 
         //@formatter:off
         builder.putInt1                 ((byte) 10);

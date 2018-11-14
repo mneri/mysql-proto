@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import me.mneri.mariadb.proto.exception.InternalProtocolException;
 import me.mneri.mariadb.proto.exception.MalformedPacketException;
-import me.mneri.mariadb.proto.util.ByteArrayWriter;
+import me.mneri.mariadb.proto.util.ByteArrayReader;
 
 class PacketReader implements Closeable {
     private Context context;
@@ -26,7 +26,7 @@ class PacketReader implements Closeable {
 
             in.read(header);
 
-            ByteArrayWriter reader = new ByteArrayWriter(header);
+            ByteArrayReader reader = new ByteArrayReader(header);
             int length = reader.getInt3();
             byte sequenceId = reader.getInt1();
 

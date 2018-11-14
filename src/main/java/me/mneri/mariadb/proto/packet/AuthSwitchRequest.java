@@ -2,8 +2,8 @@ package me.mneri.mariadb.proto.packet;
 
 import me.mneri.mariadb.proto.Packet;
 import me.mneri.mariadb.proto.exception.MalformedPacketException;
-import me.mneri.mariadb.proto.util.ByteArrayBuilder;
 import me.mneri.mariadb.proto.util.ByteArrayWriter;
+import me.mneri.mariadb.proto.util.ByteArrayReader;
 
 public class AuthSwitchRequest extends Packet {
     private String pluginName;
@@ -11,7 +11,7 @@ public class AuthSwitchRequest extends Packet {
 
     @Override
     public void deserialize(byte[] payload) throws MalformedPacketException {
-        ByteArrayWriter reader = new ByteArrayWriter(payload);
+        ByteArrayReader reader = new ByteArrayReader(payload);
 
         if ((reader.getInt1() & 0xFF) != 0xFE)
             throw new MalformedPacketException();
@@ -40,7 +40,7 @@ public class AuthSwitchRequest extends Packet {
 
     @Override
     public byte[] serialize() {
-        ByteArrayBuilder builder = new ByteArrayBuilder();
+        ByteArrayWriter builder = new ByteArrayWriter();
 
         //@formatter:off
         builder.putInt1                 ((byte) 0xFE);

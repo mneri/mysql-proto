@@ -5,8 +5,8 @@ import me.mneri.mariadb.proto.Context;
 import me.mneri.mariadb.proto.Packet;
 import me.mneri.mariadb.proto.ServerStatus;
 import me.mneri.mariadb.proto.exception.MalformedPacketException;
-import me.mneri.mariadb.proto.util.ByteArrayBuilder;
 import me.mneri.mariadb.proto.util.ByteArrayWriter;
+import me.mneri.mariadb.proto.util.ByteArrayReader;
 
 public class OkPacket extends Packet {
     private long affectedRows;
@@ -19,7 +19,7 @@ public class OkPacket extends Packet {
     @Override
     public void deserialize(byte[] payload) throws MalformedPacketException {
         Context context = getContext();
-        ByteArrayWriter reader = new ByteArrayWriter(payload);
+        ByteArrayReader reader = new ByteArrayReader(payload);
 
         int header = reader.getInt1();
 
@@ -99,7 +99,7 @@ public class OkPacket extends Packet {
     @Override
     public byte[] serialize() {
         Context context = getContext();
-        ByteArrayBuilder builder = new ByteArrayBuilder();
+        ByteArrayWriter builder = new ByteArrayWriter();
 
         //@formatter:off
         builder.putInt1             ((byte) 0x00);
