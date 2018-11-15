@@ -3,13 +3,13 @@ package me.mneri.mariadb.proto.packet;
 import me.mneri.mariadb.proto.Capabilities;
 import me.mneri.mariadb.proto.Packet;
 import me.mneri.mariadb.proto.exception.ProtocolMismatchException;
-import me.mneri.mariadb.proto.util.ByteArrayWriter;
 import me.mneri.mariadb.proto.util.ByteArrayReader;
+import me.mneri.mariadb.proto.util.ByteArrayWriter;
 
 public class Handshake10Packet extends Packet {
     private String authPluginData;
     private String authPluginName;
-    private int capabilities;
+    private long capabilities;
     private int characterSet;
     private int connectionId;
     private int serverStatus;
@@ -42,7 +42,7 @@ public class Handshake10Packet extends Packet {
 
         int length = 0;
 
-        if (isCapabilitySet(Capabilities.CLIENT_PLUGIN_AUTH)) {
+        if (isCapabilitySet(Capabilities.PLUGIN_AUTH)) {
             length = reader.getInt1();
         } else {
             reader.skip(1);
@@ -50,11 +50,11 @@ public class Handshake10Packet extends Packet {
 
         reader.skip(10);
 
-        if (isCapabilitySet(Capabilities.CLIENT_SECURE_CONNECTION)) {
+        if (isCapabilitySet(Capabilities.SECURE_CONNECTION)) {
             setAuthPluginData(getAuthPluginData() + reader.getFixedLengthString(Math.max(13, length)));
         }
 
-        if (isCapabilitySet(Capabilities.CLIENT_PLUGIN_AUTH)) {
+        if (isCapabilitySet(Capabilities.PLUGIN_AUTH)) {
             setAuthPluginName(reader.getNullTerminatedString());
         }
     }
@@ -75,11 +75,11 @@ public class Handshake10Packet extends Packet {
         this.authPluginName = authPluginName;
     }
 
-    public int getCapabilities() {
+    public long getCapabilities() {
         return capabilities;
     }
 
-    public void setCapabilities(int capabilities) {
+    public void setCapabilities(long capabilities) {
         this.capabilities = capabilities;
     }
 
@@ -115,7 +115,7 @@ public class Handshake10Packet extends Packet {
         this.serverVersion = serverVersion;
     }
 
-    private boolean isCapabilitySet(int capability) {
+    private boolean isCapabilitySet(long capability) {
         return (getCapabilities() & capability) != 0;
     }
 
@@ -135,7 +135,7 @@ public class Handshake10Packet extends Packet {
         builder.putInt2                 ((short) (getCapabilities() >> 16));
         //@formatter:on
 
-        if (isCapabilitySet(Capabilities.CLIENT_PLUGIN_AUTH)) {
+        if (isCapabilitySet(Capabilities.PLUGIN_AUTH)) {
             builder.putInt1((byte) (getAuthPluginData().length() - 8));
         } else {
             builder.putInt1((byte) 0);
@@ -143,11 +143,11 @@ public class Handshake10Packet extends Packet {
 
         builder.skip(10);
 
-        if (isCapabilitySet(Capabilities.CLIENT_SECURE_CONNECTION)) {
+        if (isCapabilitySet(Capabilities.SECURE_CONNECTION)) {
             builder.putNullTerminatedString(getAuthPluginData().substring(8));
         }
 
-        if (isCapabilitySet(Capabilities.CLIENT_PLUGIN_AUTH)) {
+        if (isCapabilitySet(Capabilities.PLUGIN_AUTH)) {
             builder.putNullTerminatedString(getAuthPluginName());
         }
 

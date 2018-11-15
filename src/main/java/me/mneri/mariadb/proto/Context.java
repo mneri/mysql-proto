@@ -1,11 +1,11 @@
 package me.mneri.mariadb.proto;
 
+import me.mneri.mariadb.proto.exception.InternalProtocolException;
+import me.mneri.mariadb.proto.exception.MalformedPacketException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import me.mneri.mariadb.proto.exception.InternalProtocolException;
-import me.mneri.mariadb.proto.exception.MalformedPacketException;
 
 public class Context {
     private int capabilities;
@@ -42,7 +42,7 @@ public class Context {
         return out;
     }
 
-    public boolean isCapabilitySet(int capability) {
+    public boolean isCapabilitySet(long capability) {
         return (capabilities & capability) != 0;
     }
 

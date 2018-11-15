@@ -24,7 +24,7 @@ public class ErrPacket extends Packet {
 
         setErrorCode(reader.getInt2());
 
-        if (context.isCapabilitySet(Capabilities.CLIENT_PROTOCOL_41)) {
+        if (context.isCapabilitySet(Capabilities.PROTOCOL_41)) {
             //@formatter:off
             setSqlStateMarker (reader.getFixedLengthString(1));
             setSqlState       (reader.getFixedLengthString(5));
@@ -74,7 +74,7 @@ public class ErrPacket extends Packet {
         builder.putInt1((byte) 0xFF);
         builder.putInt2(getErrorCode());
 
-        if (context.isCapabilitySet(Capabilities.CLIENT_PROTOCOL_41)) {
+        if (context.isCapabilitySet(Capabilities.PROTOCOL_41)) {
             builder.putFixedLengthString(getSqlStateMarker(), 1);
             builder.putFixedLengthString(getSqlState(), 5);
         }

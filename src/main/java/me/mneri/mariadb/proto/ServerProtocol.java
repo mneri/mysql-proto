@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static me.mneri.mariadb.proto.Capabilities.CLIENT_PLUGIN_AUTH;
-import static me.mneri.mariadb.proto.Capabilities.CLIENT_SECURE_CONNECTION;
+import static me.mneri.mariadb.proto.Capabilities.PLUGIN_AUTH;
+import static me.mneri.mariadb.proto.Capabilities.SECURE_CONNECTION;
 
 public class ServerProtocol {
     private Context context;
@@ -27,7 +27,7 @@ public class ServerProtocol {
             handshake.setServerVersion  ("5.5.2-m2");
             handshake.setConnectionId   (0);
             handshake.setAuthPluginData ("dvH@I-CJ*4d|cZwk4^]:.");
-            handshake.setCapabilities   (0xf5ff | CLIENT_PLUGIN_AUTH | CLIENT_SECURE_CONNECTION);
+            handshake.setCapabilities   (0xf5ff | PLUGIN_AUTH | SECURE_CONNECTION);
             handshake.setCharacterSet   (0x08);
             handshake.setServerStatus   (ServerStatus.AUTOCOMMIT);
             handshake.setAuthPluginName ("mysql_native_password");

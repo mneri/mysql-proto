@@ -3,8 +3,8 @@ package me.mneri.mariadb.proto.packet;
 import me.mneri.mariadb.proto.Capabilities;
 import me.mneri.mariadb.proto.Packet;
 import me.mneri.mariadb.proto.exception.MalformedPacketException;
-import me.mneri.mariadb.proto.util.ByteArrayWriter;
 import me.mneri.mariadb.proto.util.ByteArrayReader;
+import me.mneri.mariadb.proto.util.ByteArrayWriter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class HandshakeResponse41Packet extends Packet {
 
         setCapabilities(reader.getInt4());
 
-        if (!isCapabilitySet(Capabilities.CLIENT_PROTOCOL_41)) {
+        if (!isCapabilitySet(Capabilities.PROTOCOL_41)) {
             throw new MalformedPacketException();
         }
 
@@ -36,14 +36,14 @@ public class HandshakeResponse41Packet extends Packet {
         setUsername      (reader.getNullTerminatedString());
         //@formatter:on
 
-        if (isCapabilitySet(Capabilities.CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA)) {
+        if (isCapabilitySet(Capabilities.PLUGIN_AUTH_LENENC_DATA)) {
             setAuthResponse(reader.getLengthEncodedString());
         } else {
             int length = reader.getInt1();
             setAuthResponse(reader.getFixedLengthString(length));
         }
 
-        if (isCapabilitySet(Capabilities.CLIENT_CONNECT_WITH_DB)) {
+        if (isCapabilitySet(Capabilities.CONNECT_WITH_DB)) {
             setDatabase(reader.getNullTerminatedString());
         }
 
@@ -52,7 +52,7 @@ public class HandshakeResponse41Packet extends Packet {
             return;
         }
 
-        if (isCapabilitySet(Capabilities.CLIENT_PLUGIN_AUTH)) {
+        if (isCapabilitySet(Capabilities.PLUGIN_AUTH)) {
             setAuthPluginName(reader.getNullTerminatedString());
         }
 
@@ -61,7 +61,7 @@ public class HandshakeResponse41Packet extends Packet {
             return;
         }
 
-        if (isCapabilitySet(Capabilities.CLIENT_CONNECT_ATTRS)) {
+        if (isCapabilitySet(Capabilities.CONNECT_ATTRS)) {
             int size = (int) reader.getLengthEncodedInt();
             Map<String, String> connectAttributes = new HashMap<>();
 
@@ -137,7 +137,7 @@ public class HandshakeResponse41Packet extends Packet {
         this.username = username;
     }
 
-    private boolean isCapabilitySet(int capability) {
+    private boolean isCapabilitySet(long capability) {
         return (getCapabilities() & capability) != 0;
     }
 
@@ -153,7 +153,7 @@ public class HandshakeResponse41Packet extends Packet {
         builder.putNullTerminatedString (getUsername());
         //@formatter:on
 
-        if (isCapabilitySet(Capabilities.CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA)) {
+        if (isCapabilitySet(Capabilities.PLUGIN_AUTH_LENENC_DATA)) {
             builder.putLengthEncodedString(getAuthResponse());
         } else {
             int length = getAuthResponse().length();
@@ -161,15 +161,15 @@ public class HandshakeResponse41Packet extends Packet {
             builder.putFixedLengthString(getAuthResponse(), length);
         }
 
-        if (isCapabilitySet(Capabilities.CLIENT_CONNECT_WITH_DB)) {
+        if (isCapabilitySet(Capabilities.CONNECT_WITH_DB)) {
             builder.putNullTerminatedString(getDatabase());
         }
 
-        if (isCapabilitySet(Capabilities.CLIENT_PLUGIN_AUTH)) {
+        if (isCapabilitySet(Capabilities.PLUGIN_AUTH)) {
             builder.putNullTerminatedString(getAuthPluginName());
         }
 
-        if (isCapabilitySet(Capabilities.CLIENT_CONNECT_ATTRS)) {
+        if (isCapabilitySet(Capabilities.CONNECT_ATTRS)) {
             Map<String, String> connectAttributes = getConnectAttributes();
             int size = connectAttributes.size();
 

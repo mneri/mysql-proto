@@ -5,8 +5,8 @@ import me.mneri.mariadb.proto.Context;
 import me.mneri.mariadb.proto.Packet;
 import me.mneri.mariadb.proto.ServerStatus;
 import me.mneri.mariadb.proto.exception.MalformedPacketException;
-import me.mneri.mariadb.proto.util.ByteArrayWriter;
 import me.mneri.mariadb.proto.util.ByteArrayReader;
+import me.mneri.mariadb.proto.util.ByteArrayWriter;
 
 public class OkPacket extends Packet {
     private long affectedRows;
@@ -30,10 +30,10 @@ public class OkPacket extends Packet {
         setAffectedRows(reader.getLengthEncodedInt());
         setLastInsertId(reader.getLengthEncodedInt());
 
-        if (context.isCapabilitySet(Capabilities.CLIENT_PROTOCOL_41)) {
+        if (context.isCapabilitySet(Capabilities.PROTOCOL_41)) {
             setStatusFlags(reader.getInt2());
             setWarnings(reader.getInt2());
-        } else if (context.isCapabilitySet(Capabilities.CLIENT_TRANSACTIONS)) {
+        } else if (context.isCapabilitySet(Capabilities.TRANSACTIONS)) {
             setStatusFlags(reader.getInt2());
         }
 
@@ -107,10 +107,10 @@ public class OkPacket extends Packet {
         builder.putLengthEncodedInt (getLastInsertId());
         //@formatter:on
 
-        if (context.isCapabilitySet(Capabilities.CLIENT_PROTOCOL_41)) {
+        if (context.isCapabilitySet(Capabilities.PROTOCOL_41)) {
             builder.putInt2(getStatusFlags());
             builder.putInt2(getWarnings());
-        } else if (context.isCapabilitySet(Capabilities.CLIENT_TRANSACTIONS)) {
+        } else if (context.isCapabilitySet(Capabilities.TRANSACTIONS)) {
             builder.putInt2(getStatusFlags());
         }
 
