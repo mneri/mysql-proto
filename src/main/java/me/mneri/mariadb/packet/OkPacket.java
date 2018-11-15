@@ -18,8 +18,14 @@
 
 package me.mneri.mariadb.packet;
 
-import me.mneri.mariadb.proto.*;
 import me.mneri.mariadb.exception.MalformedPacketException;
+import me.mneri.mariadb.proto.Context;
+import me.mneri.mariadb.proto.Packet;
+import me.mneri.mariadb.proto.PayloadReader;
+import me.mneri.mariadb.proto.PayloadWriter;
+
+import static me.mneri.mariadb.proto.Capabilities.*;
+import static me.mneri.mariadb.proto.ServerStatus.SESSION_STATE_CHANGED;
 
 public class OkPacket extends Packet {
     private long affectedRows;
@@ -41,17 +47,19 @@ public class OkPacket extends Packet {
         setAffectedRows(reader.getLengthEncodedInt());
         setLastInsertId(reader.getLengthEncodedInt());
 
-        if (context.isCapabilitySet(Capabilities.PROTOCOL_41)) {
-            setStatusFlags(reader.getInt2());
-            setWarnings(reader.getInt2());
-        } else if (context.isCapabilitySet(Capabilities.TRANSACTIONS)) {
+        if (context.isCapabilitySet(PROTOCOL_41)) {
+            //@formatter:off
+            setStatusFlags (reader.getInt2());
+            setWarnings    (reader.getInt2());
+            //@formatter:on
+        } else if (context.isCapabilitySet(TRANSACTIONS)) {
             setStatusFlags(reader.getInt2());
         }
 
-        if (context.isCapabilitySet(Capabilities.CLIENT_SESSION_TRACK)) {
+        if (context.isCapabilitySet(CLIENT_SESSION_TRACK)) {
             setInfo(reader.getLengthEncodedString());
 
-            if (context.isStatusFlagSet(ServerStatus.SESSION_STATE_CHANGED)) {
+            if (context.isStatusFlagSet(SESSION_STATE_CHANGED)) {
                 setSessionStateInfo(reader.getLengthEncodedString());
             }
         } else {
@@ -117,17 +125,17 @@ public class OkPacket extends Packet {
         writer.putLengthEncodedInt (getLastInsertId());
         //@formatter:on
 
-        if (context.isCapabilitySet(Capabilities.PROTOCOL_41)) {
+        if (context.isCapabilitySet(PROTOCOL_41)) {
             writer.putInt2(getStatusFlags());
             writer.putInt2(getWarnings());
-        } else if (context.isCapabilitySet(Capabilities.TRANSACTIONS)) {
+        } else if (context.isCapabilitySet(TRANSACTIONS)) {
             writer.putInt2(getStatusFlags());
         }
 
-        if (context.isCapabilitySet(Capabilities.CLIENT_SESSION_TRACK)) {
+        if (context.isCapabilitySet(CLIENT_SESSION_TRACK)) {
             writer.putLengthEncodedString(getInfo());
 
-            if (context.isStatusFlagSet(ServerStatus.SESSION_STATE_CHANGED)) {
+            if (context.isStatusFlagSet(SESSION_STATE_CHANGED)) {
                 writer.putLengthEncodedString(getSessionStateInfo());
             }
         } else {
