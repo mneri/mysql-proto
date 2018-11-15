@@ -28,8 +28,9 @@ public class AuthMoreDataPacket extends Packet {
 
     @Override
     public void deserialize(PayloadReader reader) throws MalformedPacketException {
-        if (reader.getInt1() != 1)
+        if (reader.getInt1() != 1) {
             throw new MalformedPacketException();
+        }
 
         setData(reader.getStringEOF());
     }
