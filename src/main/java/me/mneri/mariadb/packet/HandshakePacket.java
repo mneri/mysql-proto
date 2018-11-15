@@ -199,6 +199,5 @@ public class HandshakePacket extends Packet {
         if (isCapabilitySet(PLUGIN_AUTH)) {
             writer.putNullTerminatedString(getAuthPluginName());
         }
-        ;
     }
 }
