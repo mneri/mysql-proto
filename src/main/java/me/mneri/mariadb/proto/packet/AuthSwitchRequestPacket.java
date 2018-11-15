@@ -1,20 +1,19 @@
 package me.mneri.mariadb.proto.packet;
 
 import me.mneri.mariadb.proto.Packet;
+import me.mneri.mariadb.proto.PayloadReader;
+import me.mneri.mariadb.proto.PayloadWriter;
 import me.mneri.mariadb.proto.exception.MalformedPacketException;
-import me.mneri.mariadb.proto.util.ByteArrayWriter;
-import me.mneri.mariadb.proto.util.ByteArrayReader;
 
 public class AuthSwitchRequestPacket extends Packet {
     private String pluginName;
     private String pluginProvidedData;
 
     @Override
-    public void deserialize(byte[] payload) throws MalformedPacketException {
-        ByteArrayReader reader = new ByteArrayReader(payload);
-
-        if ((reader.getInt1() & 0xFF) != 0xFE)
+    public void deserialize(PayloadReader reader) throws MalformedPacketException {
+        if ((reader.getInt1() & 0xFF) != 0xFE) {
             throw new MalformedPacketException();
+        }
 
         //@formatter:off
         setPluginName         (reader.getNullTerminatedString());
@@ -39,15 +38,11 @@ public class AuthSwitchRequestPacket extends Packet {
     }
 
     @Override
-    public byte[] serialize() {
-        ByteArrayWriter builder = new ByteArrayWriter();
-
+    public void serialize(PayloadWriter writer) {
         //@formatter:off
-        builder.putInt1                 ((byte) 0xFE);
-        builder.putNullTerminatedString (getPluginName());
-        builder.putFixedLengthString    (getPluginProvidedData(), getPluginProvidedData().length());
+        writer.putInt1                 ((byte) 0xFE);
+        writer.putNullTerminatedString (getPluginName());
+        writer.putFixedLengthString    (getPluginProvidedData(), getPluginProvidedData().length());
         //@formatter:on
-
-        return builder.build();
     }
 }

@@ -1,8 +1,8 @@
 package me.mneri.mariadb.proto.packet;
 
 import me.mneri.mariadb.proto.Packet;
-import me.mneri.mariadb.proto.util.ByteArrayReader;
-import me.mneri.mariadb.proto.util.ByteArrayWriter;
+import me.mneri.mariadb.proto.PayloadReader;
+import me.mneri.mariadb.proto.PayloadWriter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,9 +20,7 @@ public class HandshakeResponsePacket extends Packet {
     private String username;
 
     @Override
-    public void deserialize(byte[] payload) {
-        ByteArrayReader reader = new ByteArrayReader(payload);
-
+    public void deserialize(PayloadReader reader) {
         //@formatter:off
         setCapabilities  (reader.getInt4());
         setMaxPacketSize (reader.getInt4());
@@ -136,54 +134,50 @@ public class HandshakeResponsePacket extends Packet {
     }
 
     @Override
-    public byte[] serialize() {
-        ByteArrayWriter builder = new ByteArrayWriter();
-
+    public void serialize(PayloadWriter writer) {
         //@formatter:off
-        builder.putInt4 ((int) getCapabilities());
-        builder.putInt4 (getMaxPacketSize());
-        builder.putInt1 (getCharacterSet());
-        builder.skip    (19);
+        writer.putInt4 ((int) getCapabilities());
+        writer.putInt4 (getMaxPacketSize());
+        writer.putInt1 (getCharacterSet());
+        writer.skip    (19);
         //@formatter:on
 
         if (!isCapabilitySet(CLIENT_MYSQL)) {
-            builder.putInt4((int) (getCapabilities() >> 16));
+            writer.putInt4((int) (getCapabilities() >> 16));
         } else {
-            builder.skip(4);
+            writer.skip(4);
         }
 
-        builder.putNullTerminatedString(getUsername());
+        writer.putNullTerminatedString(getUsername());
 
         if (isCapabilitySet(PLUGIN_AUTH_LENENC_DATA)) {
-            builder.putLengthEncodedString(getAuthResponse());
+            writer.putLengthEncodedString(getAuthResponse());
         } else if (isCapabilitySet(SECURE_CONNECTION)) {
             int length = getAuthResponse().length();
-            builder.putInt1((byte) length);
-            builder.putFixedLengthString(getAuthResponse(), length);
+            writer.putInt1((byte) length);
+            writer.putFixedLengthString(getAuthResponse(), length);
         } else {
-            builder.skip(1);
+            writer.skip(1);
         }
 
         if (isCapabilitySet(CONNECT_WITH_DB)) {
-            builder.putNullTerminatedString(getDatabase());
+            writer.putNullTerminatedString(getDatabase());
         }
 
         if (isCapabilitySet(PLUGIN_AUTH)) {
-            builder.putNullTerminatedString(getAuthPluginName());
+            writer.putNullTerminatedString(getAuthPluginName());
         }
 
         if (isCapabilitySet(CONNECT_ATTRS)) {
             Map<String, String> connectAttributes = getConnectAttributes();
             int size = connectAttributes.size();
 
-            builder.putLengthEncodedInt(size);
+            writer.putLengthEncodedInt(size);
 
             for (String key : connectAttributes.keySet()) {
-                builder.putLengthEncodedString(key);
-                builder.putLengthEncodedString(connectAttributes.get(key));
+                writer.putLengthEncodedString(key);
+                writer.putLengthEncodedString(connectAttributes.get(key));
             }
         }
-
-        return builder.build();
     }
 }

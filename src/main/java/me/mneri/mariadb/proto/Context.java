@@ -54,7 +54,7 @@ public class Context {
         return reader.read(clazz);
     }
 
-    void send(Packet packet) throws IOException, MalformedPacketException {
+    void send(Packet packet) throws IOException {
         writer.write(packet);
     }
 

@@ -1,10 +1,10 @@
-package me.mneri.mariadb.proto.util;
+package me.mneri.mariadb.proto;
 
-public class ByteArrayReader {
+public class PayloadReader {
     private byte[] bytes;
     private int offset;
 
-    public ByteArrayReader(byte[] buff) {
+    public PayloadReader(byte[] buff) {
         this.bytes = buff;
     }
 

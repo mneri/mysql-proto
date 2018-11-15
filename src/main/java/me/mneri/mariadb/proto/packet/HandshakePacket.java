@@ -1,8 +1,8 @@
 package me.mneri.mariadb.proto.packet;
 
 import me.mneri.mariadb.proto.Packet;
-import me.mneri.mariadb.proto.util.ByteArrayReader;
-import me.mneri.mariadb.proto.util.ByteArrayWriter;
+import me.mneri.mariadb.proto.PayloadReader;
+import me.mneri.mariadb.proto.PayloadWriter;
 
 import static me.mneri.mariadb.proto.Capabilities.*;
 
@@ -16,9 +16,7 @@ public class HandshakePacket extends Packet {
     private int serverStatus;
     private String serverVersion;
 
-    public void deserialize(byte[] payload) {
-        ByteArrayReader reader = new ByteArrayReader(payload);
-
+    public void deserialize(PayloadReader reader) {
         //@formatter:off
         setProtocolVersion (reader.getInt1());
         setServerVersion   (reader.getNullTerminatedString());
@@ -141,51 +139,47 @@ public class HandshakePacket extends Packet {
     }
 
     @Override
-    public byte[] serialize() {
-        ByteArrayWriter builder = new ByteArrayWriter();
-
+    public void serialize(PayloadWriter writer) {
         //@formatter:off
-        builder.putInt1                 (getProtocolVersion());
-        builder.putNullTerminatedString (getServerVersion());
-        builder.putInt4                 (getConnectionId());
+        writer.putInt1                 (getProtocolVersion());
+        writer.putNullTerminatedString (getServerVersion());
+        writer.putInt4                 (getConnectionId());
         //@formatter:on
 
         if (getProtocolVersion() < 10) {
-            builder.putNullTerminatedString(getAuthPluginData());
-            return builder.build();
+            writer.putNullTerminatedString(getAuthPluginData());
+            return;
         }
 
         //@formatter:off
-        builder.putFixedLengthString    (getAuthPluginData().substring(0, 8), 8);
-        builder.skip                    (1);
-        builder.putInt2                 ((short) getCapabilities());
-        builder.putInt1                 ((byte)  getCharacterSet());
-        builder.putInt2                 ((short) getServerStatus());
-        builder.putInt2                 ((short) (getCapabilities() >> 16));
+        writer.putFixedLengthString    (getAuthPluginData().substring(0, 8), 8);
+        writer.skip                    (1);
+        writer.putInt2                 ((short) getCapabilities());
+        writer.putInt1                 ((byte)  getCharacterSet());
+        writer.putInt2                 ((short) getServerStatus());
+        writer.putInt2                 ((short) (getCapabilities() >> 16));
         //@formatter:on
 
         if (isCapabilitySet(PLUGIN_AUTH)) {
-            builder.putInt1((byte) (getAuthPluginData().length() - 8));
+            writer.putInt1((byte) (getAuthPluginData().length() - 8));
         } else {
-            builder.putInt1((byte) 0);
+            writer.putInt1((byte) 0);
         }
 
-        builder.skip(6);
+        writer.skip(6);
 
         if (isCapabilitySet(CLIENT_MYSQL)) {
-            builder.skip(4);
+            writer.skip(4);
         } else {
-            builder.putInt4((int) (getCapabilities() >> 32));
+            writer.putInt4((int) (getCapabilities() >> 32));
         }
 
         if (isCapabilitySet(SECURE_CONNECTION)) {
-            builder.putNullTerminatedString(getAuthPluginData().substring(8));
+            writer.putNullTerminatedString(getAuthPluginData().substring(8));
         }
 
         if (isCapabilitySet(PLUGIN_AUTH)) {
-            builder.putNullTerminatedString(getAuthPluginName());
-        }
-
-        return builder.build();
+            writer.putNullTerminatedString(getAuthPluginName());
+        };
     }
 }

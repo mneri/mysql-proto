@@ -1,15 +1,16 @@
 package me.mneri.mariadb.proto.packet;
 
 import me.mneri.mariadb.proto.Packet;
-import me.mneri.mariadb.proto.exception.MalformedPacketException;
+import me.mneri.mariadb.proto.PayloadReader;
+import me.mneri.mariadb.proto.PayloadWriter;
 
 public class ComPingPacket extends Packet {
     @Override
-    public void deserialize(byte[] payload) throws MalformedPacketException {
+    public void deserialize(PayloadReader reader) {
     }
 
     @Override
-    public byte[] serialize() throws MalformedPacketException {
-        return new byte[]{0x0E};
+    public void serialize(PayloadWriter writer) {
+        writer.putInt1((byte) 0x0E);
     }
 }

@@ -1,17 +1,15 @@
 package me.mneri.mariadb.proto.packet;
 
 import me.mneri.mariadb.proto.Packet;
+import me.mneri.mariadb.proto.PayloadReader;
+import me.mneri.mariadb.proto.PayloadWriter;
 import me.mneri.mariadb.proto.exception.MalformedPacketException;
-import me.mneri.mariadb.proto.util.ByteArrayWriter;
-import me.mneri.mariadb.proto.util.ByteArrayReader;
 
 public class AuthMoreDataPacket extends Packet {
     private String data;
 
     @Override
-    public void deserialize(byte[] payload) throws MalformedPacketException {
-        ByteArrayReader reader = new ByteArrayReader(payload);
-
+    public void deserialize(PayloadReader reader) throws MalformedPacketException {
         if (reader.getInt1() != 1)
             throw new MalformedPacketException();
 
@@ -27,12 +25,8 @@ public class AuthMoreDataPacket extends Packet {
     }
 
     @Override
-    public byte[] serialize() {
-        ByteArrayWriter builder = new ByteArrayWriter();
-
-        builder.putInt1((byte) 1);
-        builder.putFixedLengthString(getData(), getData().length());
-
-        return builder.build();
+    public void serialize(PayloadWriter writer) {
+        writer.putInt1((byte) 1);
+        writer.putFixedLengthString(getData(), getData().length());
     }
 }
