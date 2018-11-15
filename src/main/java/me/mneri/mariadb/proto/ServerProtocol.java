@@ -1,8 +1,8 @@
 package me.mneri.mariadb.proto;
 
 import me.mneri.mariadb.proto.exception.MalformedPacketException;
-import me.mneri.mariadb.proto.packet.Handshake10Packet;
-import me.mneri.mariadb.proto.packet.HandshakeResponse41Packet;
+import me.mneri.mariadb.proto.packet.HandshakePacket;
+import me.mneri.mariadb.proto.packet.HandshakeResponsePacket;
 import me.mneri.mariadb.proto.packet.OkPacket;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class ServerProtocol {
     private void start() {
         try {
             //@formatter:off
-            Handshake10Packet handshake = context.create(Handshake10Packet.class, (byte) 0);
+            HandshakePacket handshake = context.create(HandshakePacket.class, (byte) 0);
 
             handshake.setServerVersion  ("5.5.2-m2");
             handshake.setConnectionId   (0);
@@ -35,7 +35,7 @@ public class ServerProtocol {
             context.send(handshake);
             //@formatter:on
 
-            HandshakeResponse41Packet handshakeResponse = context.receive(HandshakeResponse41Packet.class);
+            HandshakeResponsePacket handshakeResponse = context.receive(HandshakeResponsePacket.class);
             handshakeResponse.toString();
 
             OkPacket ok = context.create(OkPacket.class, (byte) 2);

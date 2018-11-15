@@ -1,18 +1,18 @@
 package me.mneri.mariadb.proto.packet;
 
-import me.mneri.mariadb.proto.Capabilities;
 import me.mneri.mariadb.proto.Packet;
-import me.mneri.mariadb.proto.exception.MalformedPacketException;
 import me.mneri.mariadb.proto.util.ByteArrayReader;
 import me.mneri.mariadb.proto.util.ByteArrayWriter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class HandshakeResponse41Packet extends Packet {
+import static me.mneri.mariadb.proto.Capabilities.*;
+
+public class HandshakeResponsePacket extends Packet {
     private String authPluginName;
     private String authResponse;
-    private int capabilities;
+    private long capabilities;
     private byte characterSet;
     private Map<String, String> connectAttributes;
     private String database;
@@ -20,48 +20,42 @@ public class HandshakeResponse41Packet extends Packet {
     private String username;
 
     @Override
-    public void deserialize(byte[] payload) throws MalformedPacketException {
+    public void deserialize(byte[] payload) {
         ByteArrayReader reader = new ByteArrayReader(payload);
 
-        setCapabilities(reader.getInt4());
-
-        if (!isCapabilitySet(Capabilities.PROTOCOL_41)) {
-            throw new MalformedPacketException();
-        }
-
         //@formatter:off
+        setCapabilities  (reader.getInt4());
         setMaxPacketSize (reader.getInt4());
         setCharacterSet  (reader.getInt1());
-                          reader.skip(23);
-        setUsername      (reader.getNullTerminatedString());
+                          reader.skip(19);
         //@formatter:on
 
-        if (isCapabilitySet(Capabilities.PLUGIN_AUTH_LENENC_DATA)) {
-            setAuthResponse(reader.getLengthEncodedString());
+        if (!isCapabilitySet(CLIENT_MYSQL)) {
+            setCapabilities(reader.getInt4() << 16 | getCapabilities());
         } else {
-            int length = reader.getInt1();
-            setAuthResponse(reader.getFixedLengthString(length));
+            reader.skip(4);
         }
 
-        if (isCapabilitySet(Capabilities.CONNECT_WITH_DB)) {
+        setUsername(reader.getNullTerminatedString());
+
+        if (isCapabilitySet(PLUGIN_AUTH_LENENC_DATA)) {
+            setAuthResponse(reader.getLengthEncodedString());
+        } else if (isCapabilitySet(SECURE_CONNECTION)) {
+            int length = reader.getInt1();
+            setAuthResponse(reader.getFixedLengthString(length));
+        } else {
+            reader.skip(1);
+        }
+
+        if (isCapabilitySet(CONNECT_WITH_DB)) {
             setDatabase(reader.getNullTerminatedString());
         }
 
-        // XXX: Not in the protocol specification
-        if (!reader.hasMore()) {
-            return;
-        }
-
-        if (isCapabilitySet(Capabilities.PLUGIN_AUTH)) {
+        if (isCapabilitySet(PLUGIN_AUTH)) {
             setAuthPluginName(reader.getNullTerminatedString());
         }
 
-        // XXX: Not in the protocol specification
-        if (!reader.hasMore()) {
-            return;
-        }
-
-        if (isCapabilitySet(Capabilities.CONNECT_ATTRS)) {
+        if (isCapabilitySet(CONNECT_ATTRS)) {
             int size = (int) reader.getLengthEncodedInt();
             Map<String, String> connectAttributes = new HashMap<>();
 
@@ -89,11 +83,11 @@ public class HandshakeResponse41Packet extends Packet {
         this.authResponse = authResponse;
     }
 
-    public int getCapabilities() {
+    public long getCapabilities() {
         return capabilities;
     }
 
-    public void setCapabilities(int capabilities) {
+    public void setCapabilities(long capabilities) {
         this.capabilities = capabilities;
     }
 
@@ -146,30 +140,39 @@ public class HandshakeResponse41Packet extends Packet {
         ByteArrayWriter builder = new ByteArrayWriter();
 
         //@formatter:off
-        builder.putInt4                 (getCapabilities());
-        builder.putInt4                 (getMaxPacketSize());
-        builder.putInt1                 (getCharacterSet());
-        builder.skip                    (23);
-        builder.putNullTerminatedString (getUsername());
+        builder.putInt4 ((int) getCapabilities());
+        builder.putInt4 (getMaxPacketSize());
+        builder.putInt1 (getCharacterSet());
+        builder.skip    (19);
         //@formatter:on
 
-        if (isCapabilitySet(Capabilities.PLUGIN_AUTH_LENENC_DATA)) {
-            builder.putLengthEncodedString(getAuthResponse());
+        if (!isCapabilitySet(CLIENT_MYSQL)) {
+            builder.putInt4((int) (getCapabilities() >> 16));
         } else {
+            builder.skip(4);
+        }
+
+        builder.putNullTerminatedString(getUsername());
+
+        if (isCapabilitySet(PLUGIN_AUTH_LENENC_DATA)) {
+            builder.putLengthEncodedString(getAuthResponse());
+        } else if (isCapabilitySet(SECURE_CONNECTION)) {
             int length = getAuthResponse().length();
             builder.putInt1((byte) length);
             builder.putFixedLengthString(getAuthResponse(), length);
+        } else {
+            builder.skip(1);
         }
 
-        if (isCapabilitySet(Capabilities.CONNECT_WITH_DB)) {
+        if (isCapabilitySet(CONNECT_WITH_DB)) {
             builder.putNullTerminatedString(getDatabase());
         }
 
-        if (isCapabilitySet(Capabilities.PLUGIN_AUTH)) {
+        if (isCapabilitySet(PLUGIN_AUTH)) {
             builder.putNullTerminatedString(getAuthPluginName());
         }
 
-        if (isCapabilitySet(Capabilities.CONNECT_ATTRS)) {
+        if (isCapabilitySet(CONNECT_ATTRS)) {
             Map<String, String> connectAttributes = getConnectAttributes();
             int size = connectAttributes.size();
 

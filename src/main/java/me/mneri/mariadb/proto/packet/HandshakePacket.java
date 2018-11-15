@@ -1,33 +1,39 @@
 package me.mneri.mariadb.proto.packet;
 
-import me.mneri.mariadb.proto.Capabilities;
 import me.mneri.mariadb.proto.Packet;
-import me.mneri.mariadb.proto.exception.ProtocolMismatchException;
 import me.mneri.mariadb.proto.util.ByteArrayReader;
 import me.mneri.mariadb.proto.util.ByteArrayWriter;
 
-public class Handshake10Packet extends Packet {
+import static me.mneri.mariadb.proto.Capabilities.*;
+
+public class HandshakePacket extends Packet {
     private String authPluginData;
     private String authPluginName;
     private long capabilities;
     private int characterSet;
     private int connectionId;
+    private byte protocolVersion;
     private int serverStatus;
     private String serverVersion;
 
     public void deserialize(byte[] payload) {
         ByteArrayReader reader = new ByteArrayReader(payload);
 
-        if (reader.getInt1() != 10) {
-            throw new ProtocolMismatchException();
+        //@formatter:off
+        setProtocolVersion (reader.getInt1());
+        setServerVersion   (reader.getNullTerminatedString());
+        setConnectionId    (reader.getInt4());
+        //@formatter:on
+
+        if (getProtocolVersion() < 10) {
+            setAuthPluginData(reader.getNullTerminatedString());
+            return;
         }
 
         //@formatter:off
-        setServerVersion  (reader.getNullTerminatedString());
-        setConnectionId   (reader.getInt4());
-        setAuthPluginData (reader.getFixedLengthString(8));
-                           reader.skip(1);
-        setCapabilities   (reader.getInt2() << 16);
+        setAuthPluginData  (reader.getFixedLengthString(8));
+                            reader.skip(1);
+        setCapabilities    (reader.getInt2());
         //@formatter:on
 
         if (!reader.hasMore()) {
@@ -37,24 +43,31 @@ public class Handshake10Packet extends Packet {
         //@formatter:off
         setCharacterSet (reader.getInt1());
         setServerStatus (reader.getInt2());
-        setCapabilities (reader.getInt2() | getCapabilities());
+        setCapabilities (((int) reader.getInt2() << 16) | getCapabilities());
         //@formatter:on
 
         int length = 0;
 
-        if (isCapabilitySet(Capabilities.PLUGIN_AUTH)) {
+        if (isCapabilitySet(PLUGIN_AUTH)) {
             length = reader.getInt1();
         } else {
             reader.skip(1);
         }
 
-        reader.skip(10);
+        reader.skip(6);
 
-        if (isCapabilitySet(Capabilities.SECURE_CONNECTION)) {
-            setAuthPluginData(getAuthPluginData() + reader.getFixedLengthString(Math.max(13, length)));
+        if (isCapabilitySet(CLIENT_MYSQL)) {
+            reader.skip(4);
+        } else {
+            setCapabilities(((long) reader.getInt4()) << 32 | getCapabilities());
         }
 
-        if (isCapabilitySet(Capabilities.PLUGIN_AUTH)) {
+        if (isCapabilitySet(SECURE_CONNECTION)) {
+            setAuthPluginData(getAuthPluginData() + reader.getFixedLengthString(Math.max(12, length)));
+            reader.skip(1);
+        }
+
+        if (isCapabilitySet(PLUGIN_AUTH)) {
             setAuthPluginName(reader.getNullTerminatedString());
         }
     }
@@ -99,6 +112,14 @@ public class Handshake10Packet extends Packet {
         this.connectionId = connectionId;
     }
 
+    public byte getProtocolVersion() {
+        return protocolVersion;
+    }
+
+    public void setProtocolVersion(byte protocolVersion) {
+        this.protocolVersion = protocolVersion;
+    }
+
     public int getServerStatus() {
         return serverStatus;
     }
@@ -124,9 +145,17 @@ public class Handshake10Packet extends Packet {
         ByteArrayWriter builder = new ByteArrayWriter();
 
         //@formatter:off
-        builder.putInt1                 ((byte) 10);
+        builder.putInt1                 (getProtocolVersion());
         builder.putNullTerminatedString (getServerVersion());
         builder.putInt4                 (getConnectionId());
+        //@formatter:on
+
+        if (getProtocolVersion() < 10) {
+            builder.putNullTerminatedString(getAuthPluginData());
+            return builder.build();
+        }
+
+        //@formatter:off
         builder.putFixedLengthString    (getAuthPluginData().substring(0, 8), 8);
         builder.skip                    (1);
         builder.putInt2                 ((short) getCapabilities());
@@ -135,19 +164,25 @@ public class Handshake10Packet extends Packet {
         builder.putInt2                 ((short) (getCapabilities() >> 16));
         //@formatter:on
 
-        if (isCapabilitySet(Capabilities.PLUGIN_AUTH)) {
+        if (isCapabilitySet(PLUGIN_AUTH)) {
             builder.putInt1((byte) (getAuthPluginData().length() - 8));
         } else {
             builder.putInt1((byte) 0);
         }
 
-        builder.skip(10);
+        builder.skip(6);
 
-        if (isCapabilitySet(Capabilities.SECURE_CONNECTION)) {
+        if (isCapabilitySet(CLIENT_MYSQL)) {
+            builder.skip(4);
+        } else {
+            builder.putInt4((int) (getCapabilities() >> 32));
+        }
+
+        if (isCapabilitySet(SECURE_CONNECTION)) {
             builder.putNullTerminatedString(getAuthPluginData().substring(8));
         }
 
-        if (isCapabilitySet(Capabilities.PLUGIN_AUTH)) {
+        if (isCapabilitySet(PLUGIN_AUTH)) {
             builder.putNullTerminatedString(getAuthPluginName());
         }
 

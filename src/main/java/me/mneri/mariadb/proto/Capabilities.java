@@ -2,7 +2,7 @@ package me.mneri.mariadb.proto;
 
 public final class Capabilities {
     //@formatter:off
-    public static final long LONG_PASSWORD                       = 1;
+    public static final long CLIENT_MYSQL                        = 1;
     public static final long FOUND_ROWS                          = 1 << 1;
     public static final long LONG_FLAG                           = 1 << 2;
     public static final long CONNECT_WITH_DB                     = 1 << 3;
