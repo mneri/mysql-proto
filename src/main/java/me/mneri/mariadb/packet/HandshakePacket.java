@@ -47,9 +47,9 @@ public class HandshakePacket extends Packet {
         }
 
         //@formatter:off
-        setAuthPluginData  (reader.getFixedLengthString(8));
-                            reader.skip(1);
-        setCapabilities    (reader.getInt2());
+        setAuthPluginData (reader.getFixedLengthString(8));
+                           reader.skip(1);
+        setCapabilities   (reader.getInt2());
         //@formatter:on
 
         if (!reader.hasMore()) {
@@ -170,12 +170,12 @@ public class HandshakePacket extends Packet {
         }
 
         //@formatter:off
-        writer.putFixedLengthString    (getAuthPluginData().substring(0, 8), 8);
-        writer.skip                    (1);
-        writer.putInt2                 ((short) getCapabilities());
-        writer.putInt1                 ((byte)  getCharacterSet());
-        writer.putInt2                 ((short) getServerStatus());
-        writer.putInt2                 ((short) (getCapabilities() >> 16));
+        writer.putFixedLengthString (getAuthPluginData().substring(0, 8), 8);
+        writer.skip                 (1);
+        writer.putInt2              ((short) getCapabilities());
+        writer.putInt1              ((byte)  getCharacterSet());
+        writer.putInt2              ((short) getServerStatus());
+        writer.putInt2              ((short) (getCapabilities() >> 16));
         //@formatter:on
 
         if (isCapabilitySet(PLUGIN_AUTH)) {
@@ -198,6 +198,7 @@ public class HandshakePacket extends Packet {
 
         if (isCapabilitySet(PLUGIN_AUTH)) {
             writer.putNullTerminatedString(getAuthPluginName());
-        };
+        }
+        ;
     }
 }
