@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-package me.mneri.mariadb.util;
+package me.mneri.mariadb.proto;
 
-public class ByteArrayReader {
-    private byte[] bytes;
+public class ProtoStreamReader {
+    private byte[] buff;
     private int offset;
 
-    public ByteArrayReader(byte[] buff) {
-        this.bytes = buff;
+    public ProtoStreamReader(byte[] buff) {
+        this.buff = buff;
     }
 
     public String getFixedLengthString(int len) {
@@ -31,7 +31,7 @@ public class ByteArrayReader {
         int end = offset + len;
 
         while (offset < end) {
-            sb.append((char) bytes[offset++]);
+            sb.append((char) buff[offset++]);
         }
 
         return sb.toString();
@@ -65,11 +65,11 @@ public class ByteArrayReader {
         long value = 0;
 
         for (int i = offset + len - 1; i > offset; i--) {
-            value |= bytes[i] & 0xFF;
+            value |= buff[i] & 0xFF;
             value <<= 8;
         }
 
-        value |= bytes[offset] & 0xFF;
+        value |= buff[offset] & 0xFF;
         offset += len;
 
         return value;
@@ -93,8 +93,8 @@ public class ByteArrayReader {
     public String getNullTerminatedString() {
         StringBuilder sb = new StringBuilder();
 
-        while (bytes[offset] != 0x00) {
-            sb.append((char) bytes[offset++]);
+        while (buff[offset] != 0x00) {
+            sb.append((char) buff[offset++]);
         }
 
         offset++;
@@ -105,15 +105,15 @@ public class ByteArrayReader {
     public String getStringEOF() {
         StringBuilder sb = new StringBuilder();
 
-        while (offset < bytes.length) {
-            sb.append((char) bytes[offset++]);
+        while (offset < buff.length) {
+            sb.append((char) buff[offset++]);
         }
 
         return sb.toString();
     }
 
     public boolean hasMore() {
-        return offset < bytes.length;
+        return offset < buff.length;
     }
 
     public void skip(int len) {

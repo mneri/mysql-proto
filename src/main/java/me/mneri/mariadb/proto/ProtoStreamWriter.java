@@ -16,21 +16,21 @@
  * limitations under the License.
  */
 
-package me.mneri.mariadb.util;
+package me.mneri.mariadb.proto;
 
 import java.util.Arrays;
 
-public class ByteArrayWriter {
+public class ProtoStreamWriter {
     private static final int DEFAULT_CAPACITY = 256;
 
     private byte[] bytes;
     private int offset;
 
-    public ByteArrayWriter() {
+    public ProtoStreamWriter() {
         this(DEFAULT_CAPACITY);
     }
 
-    public ByteArrayWriter(int initialCapacity) {
+    public ProtoStreamWriter(int initialCapacity) {
         this.bytes = new byte[initialCapacity];
     }
 
@@ -84,32 +84,32 @@ public class ByteArrayWriter {
         offset += len;
     }
 
-    public ByteArrayWriter putInt1(byte i) {
+    public ProtoStreamWriter putInt1(byte i) {
         putIntN(i, 1);
         return this;
     }
 
-    public ByteArrayWriter putInt2(short i) {
+    public ProtoStreamWriter putInt2(short i) {
         putIntN(i, 2);
         return this;
     }
 
-    public ByteArrayWriter putInt3(int i) {
+    public ProtoStreamWriter putInt3(int i) {
         putIntN(i, 3);
         return this;
     }
 
-    public ByteArrayWriter putInt4(int i) {
+    public ProtoStreamWriter putInt4(int i) {
         putIntN(i, 4);
         return this;
     }
 
-    public ByteArrayWriter putInt6(long i) {
+    public ProtoStreamWriter putInt6(long i) {
         putIntN(1, 6);
         return this;
     }
 
-    public ByteArrayWriter putInt8(long i) {
+    public ProtoStreamWriter putInt8(long i) {
         putIntN(i, 8);
         return this;
     }
@@ -127,7 +127,7 @@ public class ByteArrayWriter {
         }
     }
 
-    public ByteArrayWriter putLengthEncodedInt(long value) {
+    public ProtoStreamWriter putLengthEncodedInt(long value) {
         if (value < 251) {
             putInt1((byte) value);
         } else if (value <= 65_536) {
@@ -144,7 +144,7 @@ public class ByteArrayWriter {
         return this;
     }
 
-    public ByteArrayWriter putLengthEncodedString(String s) {
+    public ProtoStreamWriter putLengthEncodedString(String s) {
         byte[] source = s.getBytes();
 
         ensureSpace(1 + source.length);
@@ -156,7 +156,7 @@ public class ByteArrayWriter {
         return this;
     }
 
-    public ByteArrayWriter putNullTerminatedString(String s) {
+    public ProtoStreamWriter putNullTerminatedString(String s) {
         byte[] source = s.getBytes();
 
         ensureSpace(source.length + 1);
@@ -168,7 +168,7 @@ public class ByteArrayWriter {
         return this;
     }
 
-    public ByteArrayWriter skip(int len) {
+    public ProtoStreamWriter skip(int len) {
         ensureSpace(len);
         offset += len;
         return this;
