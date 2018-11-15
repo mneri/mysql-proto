@@ -1,9 +1,9 @@
-package me.mneri.mariadb.proto.packet;
+package me.mneri.mariadb.packet;
 
 import me.mneri.mariadb.proto.Packet;
 import me.mneri.mariadb.proto.PayloadReader;
 import me.mneri.mariadb.proto.PayloadWriter;
-import me.mneri.mariadb.proto.exception.MalformedPacketException;
+import me.mneri.mariadb.exception.MalformedPacketException;
 
 public class AuthMoreDataPacket extends Packet {
     private String data;

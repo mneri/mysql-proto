@@ -1,6 +1,6 @@
 package me.mneri.mariadb.proto;
 
-import me.mneri.mariadb.proto.exception.MalformedPacketException;
+import me.mneri.mariadb.exception.MalformedPacketException;
 
 public abstract class Packet {
     private Context context;

@@ -1,4 +1,4 @@
-package me.mneri.mariadb.proto;
+package me.mneri.mariadb.util;
 
 import java.util.Arrays;
 

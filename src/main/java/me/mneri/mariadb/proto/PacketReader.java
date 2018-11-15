@@ -1,7 +1,7 @@
 package me.mneri.mariadb.proto;
 
-import me.mneri.mariadb.proto.exception.InternalProtocolException;
-import me.mneri.mariadb.proto.exception.MalformedPacketException;
+import me.mneri.mariadb.exception.InternalProtocolException;
+import me.mneri.mariadb.exception.MalformedPacketException;
 
 import java.io.Closeable;
 import java.io.IOException;

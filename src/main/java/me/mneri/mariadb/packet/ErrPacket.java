@@ -1,7 +1,7 @@
-package me.mneri.mariadb.proto.packet;
+package me.mneri.mariadb.packet;
 
 import me.mneri.mariadb.proto.*;
-import me.mneri.mariadb.proto.exception.MalformedPacketException;
+import me.mneri.mariadb.exception.MalformedPacketException;
 
 public class ErrPacket extends Packet {
     private short errorCode;

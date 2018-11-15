@@ -1,4 +1,4 @@
-package me.mneri.mariadb.proto.packet;
+package me.mneri.mariadb.packet;
 
 import me.mneri.mariadb.proto.Packet;
 import me.mneri.mariadb.proto.PayloadReader;

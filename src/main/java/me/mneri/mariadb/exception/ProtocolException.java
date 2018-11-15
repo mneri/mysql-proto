@@ -1,4 +1,4 @@
-package me.mneri.mariadb.proto.exception;
+package me.mneri.mariadb.exception;
 
 public class ProtocolException extends Exception {
     public ProtocolException() {

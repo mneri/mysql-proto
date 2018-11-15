@@ -1,9 +1,9 @@
 package me.mneri.mariadb.proto;
 
-import me.mneri.mariadb.proto.exception.MalformedPacketException;
-import me.mneri.mariadb.proto.packet.HandshakePacket;
-import me.mneri.mariadb.proto.packet.HandshakeResponsePacket;
-import me.mneri.mariadb.proto.packet.OkPacket;
+import me.mneri.mariadb.exception.MalformedPacketException;
+import me.mneri.mariadb.packet.HandshakePacket;
+import me.mneri.mariadb.packet.HandshakeResponsePacket;
+import me.mneri.mariadb.packet.OkPacket;
 
 import java.io.IOException;
 import java.io.InputStream;
