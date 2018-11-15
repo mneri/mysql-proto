@@ -21,11 +21,13 @@ public class ByteArrayWriter {
     }
 
     public void ensureCapacity(int minimumCapacity) {
-        if (minimumCapacity <= 0)
+        if (minimumCapacity <= 0) {
             throw new IllegalArgumentException();
+        }
 
-        if (minimumCapacity - bytes.length <= 0)
+        if (minimumCapacity - bytes.length <= 0) {
             return;
+        }
 
         int newCapacity = bytes.length * 2;
 

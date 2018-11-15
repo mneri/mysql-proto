@@ -61,10 +61,10 @@ public class ByteArrayReader {
         int head = getInt1() & 0xFF;
 
         //@formatter:off
-        if (head < 251)        return head;
-        else if (head == 0xFC) return getInt2();
-        else if (head == 0xFD) return getInt3();
-        else                   return getInt8();
+        if (head < 251)        { return head; }
+        else if (head == 0xFC) { return getInt2(); }
+        else if (head == 0xFD) { return getInt3(); }
+        else                   { return getInt8(); }
         //@formatter:on
     }
 
@@ -75,8 +75,9 @@ public class ByteArrayReader {
     public String getNullTerminatedString() {
         StringBuilder sb = new StringBuilder();
 
-        while (bytes[offset] != 0x00)
+        while (bytes[offset] != 0x00) {
             sb.append((char) bytes[offset++]);
+        }
 
         offset++;
 
@@ -86,8 +87,9 @@ public class ByteArrayReader {
     public String getStringEOF() {
         StringBuilder sb = new StringBuilder();
 
-        while (offset < bytes.length)
+        while (offset < bytes.length) {
             sb.append((char) bytes[offset++]);
+        }
 
         return sb.toString();
     }
